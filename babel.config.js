@@ -1,4 +1,4 @@
 module.exports = {
-  base: "/Huyhehe/PBL3/",
+  publicPath: process.env.NODE_ENV === "production" ? "/Huyhehe/PBL3/" : "/",
   presets: ["@vue/cli-plugin-babel/preset"],
 };
