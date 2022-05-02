@@ -1,0 +1,46 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "Nguyễn Thành Huy",
+      "age": 20,
+      "gender": "male",
+      "contact": "0919757480",
+      "account": "huyhehe",
+      "password": "123456",
+      "level": {
+        "isManager": true
+      },
+      "status": "Offline",
+      "avatar": "https://scontent.fdad2-1.fna.fbcdn.net/v/t1.6435-9/117145919_1399807050217520_5947872285759886557_n.jpg?_nc_cat=108&ccb=1-5&_nc_sid=174925&_nc_ohc=fnVCPyEDn6YAX81Agkr&_nc_ht=scontent.fdad2-1.fna&oh=00_AT_5gjeSDge7vpq-B5f67IiMe-OyzHiOs9TFffGwviA20Q&oe=6290E991"
+    },
+    {
+      "id": 2,
+      "name": "Trương Văn Minh Hiếu",
+      "age": 20,
+      "gender": "male",
+      "contact": "0152662312",
+      "account": "minhhieu",
+      "password": "123456",
+      "level": {
+        "isManager": false
+      },
+      "status": "Offline",
+      "avatar": "https://scontent.fdad1-3.fna.fbcdn.net/v/t39.30808-1/240666832_1695274257489719_3850317834526677139_n.jpg?stp=c0.39.200.200a_dst-jpg_p200x200&_nc_cat=109&ccb=1-5&_nc_sid=7206a8&_nc_ohc=CSmPQYrH0kYAX_Q87ns&_nc_ht=scontent.fdad1-3.fna&oh=00_AT_pMH4qqM3NVL8UkOKk4IkvmBUa7ehFVXKwi5hiPzsW2w&oe=627031AE"
+    },
+    {
+      "id": 3,
+      "name": "Mai Xuân Duy",
+      "age": 20,
+      "gender": "male",
+      "contact": "0154232121",
+      "account": "duymai",
+      "password": "123456",
+      "level": {
+        "isManager": false
+      },
+      "status": "Offline",
+      "avatar": "https://scontent.fdad2-1.fna.fbcdn.net/v/t39.30808-6/279120033_297724095869711_5987025959697810682_n.jpg?_nc_cat=101&ccb=1-5&_nc_sid=09cbfe&_nc_ohc=JquKHbL3of0AX_nZr0r&tn=cvxg4uDrq6upjwCz&_nc_ht=scontent.fdad2-1.fna&oh=00_AT_1fZITCevOVjK_ekV6u2I2V3JceJXmtg6yTmdatGqO9g&oe=627012C9"
+    }
+  ]
+}

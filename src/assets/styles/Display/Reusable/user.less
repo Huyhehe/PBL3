@@ -1,0 +1,78 @@
+.user {
+  min-height: 100vh;
+  padding: 50px 0 0 0;
+
+  .header {
+    display: flex;
+    align-items: flex-end;
+    height: 150px;
+
+    .header-img-box {
+      background-color: #aaaaaa;
+      border-radius: 100rem;
+      height: inherit;
+      aspect-ratio: 1/1;
+
+      img {
+        width: 150px;
+        aspect-ratio: 1/1;
+        border-radius: 100rem;
+        object-fit: cover;
+      }
+    }
+
+    .header-name-box {
+      margin: 0 0 20px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+
+      p {
+        margin: 5px 0;
+      }
+
+      .header-name {
+        font-size: 20px;
+      }
+      .header-role {
+        font-size: 16px;
+        color: #aaaaaa;
+      }
+    }
+  }
+
+  .body {
+    padding: 40px 0;
+
+    .body-info-box {
+      display: flex;
+      form {
+        .input-box {
+          font-size: 20px;
+          margin: 30px 0;
+          display: flex;
+          justify-content: space-between;
+          cursor: auto;
+
+          label {
+            font-weight: 700;
+            flex-grow: 1;
+            text-align: end;
+            cursor: auto;
+          }
+          input {
+            margin-left: 10px;
+            font-size: 20px;
+            border: none;
+            outline: none;
+            cursor: auto;
+
+            &.input-toggle {
+              border-bottom: 1px solid black;
+            }
+          }
+        }
+      }
+    }
+  }
+}

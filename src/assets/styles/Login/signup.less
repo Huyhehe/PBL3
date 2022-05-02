@@ -1,0 +1,122 @@
+* {
+  padding: 0;
+  margin: 0;
+  color: white;
+  font-family: "Montserrat", sans-serif;
+}
+
+.sign-up {
+  display: flex;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+  background-image: url("./background.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.signUp-container {
+  width: 20vw;
+  height: 60vh;
+  background-color: rgba(0, 0, 0, 0.75);
+  padding: 4em;
+  // box-sizing: border-box;
+  border-radius: 5px;
+
+  .signUp-title {
+    display: flex;
+    justify-content: left;
+  }
+
+  .signUp-body {
+    padding: 2em 0;
+    min-height: 30%;
+
+    form {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      .signUp-inputs-wrapper {
+        width: 100%;
+        position: relative;
+
+        .signUp-inputs {
+          width: 100%;
+          height: 50px;
+          font-size: 16px;
+          border: none;
+          margin: 1em auto;
+          padding: 0 20px;
+          box-sizing: border-box;
+          border-radius: 4px;
+          background-color: #333;
+          outline: none;
+          &:not(:placeholder-shown) + .signUp-inputs-labels,
+          &:focus + .signUp-inputs-labels {
+            top: 0;
+            transform: translateY(-30%);
+          }
+        }
+        .signUp-inputs-labels {
+          position: absolute;
+          left: 20px;
+          top: 50%;
+          transform: translateY(-50%);
+          user-select: none;
+          pointer-events: none;
+          color: #999;
+          transition: all 0.3s ease;
+        }
+
+        #submit-button {
+          background-color: #e50914;
+          color: #fff;
+          font-weight: 600;
+          padding: 0;
+          cursor: pointer;
+          margin: 30px 0 0 0;
+        }
+      }
+    }
+  }
+}
+
+@-webkit-keyframes autofill {
+  0%,
+  100% {
+    background: #333;
+  }
+}
+
+input:-webkit-autofill {
+  animation-delay: 1s;
+  animation-name: autofill;
+  animation-fill-mode: both;
+}
+
+.sign-in {
+  display: flex;
+  justify-content: left;
+  form {
+    font-size: 20px;
+    a {
+      margin: 0 10px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 20px;
+    }
+  }
+}
+
+.sign-up {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.signUp-extra-content {
+  margin: 20px 0;
+}

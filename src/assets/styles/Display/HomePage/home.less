@@ -1,0 +1,96 @@
+@import "~@/assets/variables.less";
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.home {
+  box-sizing: border-box;
+  padding: 0 50px;
+  flex-grow: 1;
+  transition: all 0.3s ease;
+
+  .home-container {
+    .employee-row {
+      cursor: pointer;
+      &:hover {
+        background-color: #dddddd;
+      }
+    }
+
+    .search-form {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      form {
+        input {
+          font-size: 16px;
+          height: 30px;
+          padding: 0 10px;
+          outline: none;
+          border: 1px solid #dddddd;
+          transition: all 0.3s ease;
+
+          &:hover,
+          &:focus {
+            border: 1px solid black;
+          }
+        }
+      }
+      button {
+        border: 1px solid #dddddd;
+        background-color: transparent;
+        color: #858484;
+        font-size: 18px;
+        padding: 5px 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        &:hover {
+          border: 1px solid black;
+          color: black;
+        }
+      }
+    }
+  }
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 50px;
+}
+
+td,
+th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 10px 20px;
+}
+
+.manager-only {
+  margin-top: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  h1 {
+    height: fit-content;
+    font-size: 100px;
+    color: @error-color;
+  }
+}
+
+.is-online {
+  color: @success-color;
+}
+.is-offline {
+  color: @error-color;
+}
+
+.disable {
+  display: none;
+}
+
+// SINGLE DISPLAY
