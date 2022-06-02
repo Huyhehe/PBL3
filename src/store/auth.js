@@ -9,6 +9,7 @@ export default {
     user: {},
     listEmp: {},
     singleEmp: {},
+    token: "",
   },
   mutations: {
     SIGN_IN(state, { userAccount, userPassword }) {
@@ -66,8 +67,11 @@ export default {
         state.user = user;
       }
     },
-    TEST(state, data) {
-      console.log(data);
+    TEST(state, { user, jwt }) {
+      state.token = "bearer " + jwt;
+      state.user = user;
+      console.log(user);
+      router.push("/");
     },
   },
   getters: {
@@ -85,7 +89,17 @@ export default {
           "https://shopguitarapi.azurewebsites.net/Auth/login",
           { userName: userAccount, password: userPassword }
         );
-        commit("TEST", res.data.JSON());
+        const jwt = res.data;
+
+        const user = await axios.get(
+          "https://shopguitarapi.azurewebsites.net/Auth/login",
+          {
+            headers: {
+              Authorization: `Bearer ${jwt}`,
+            },
+          }
+        );
+        commit("TEST", { user, jwt });
       } catch (err) {
         console.error(err);
       }
