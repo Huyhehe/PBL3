@@ -7,15 +7,32 @@
 
 .home {
   box-sizing: border-box;
-  padding: 0 50px;
-  flex-grow: 1;
-  transition: all 0.3s ease;
 
   .home-container {
+    padding: 1.5rem 50px;
     .employee-row {
       cursor: pointer;
       &:hover {
         background-color: #dddddd;
+      }
+    }
+
+    .home-container-title {
+      font-size: 2.5rem;
+      color: @primary-text-color-light;
+      padding: 0.5rem 0;
+      margin-bottom: 2rem;
+      text-align: center;
+      position: relative;
+
+      &::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        height: 1px;
+        width: 100%;
+        background-color: #c3d1e3;
       }
     }
 
@@ -60,11 +77,27 @@ table {
   border-collapse: collapse;
   width: 100%;
   margin-top: 50px;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  box-sizing: border-box;
+
+  thead {
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    th {
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+  }
+
+  tbody {
+    #td-id {
+      width: 5%;
+    }
+  }
 }
 
 td,
 th {
-  border: 1px solid #dddddd;
+  // border: 1px solid #dddddd;
   text-align: left;
   padding: 10px 20px;
 }

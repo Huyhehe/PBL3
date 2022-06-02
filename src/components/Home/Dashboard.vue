@@ -5,7 +5,7 @@
       class="home-container"
       :class="isSingleDisplay ? 'disable' : ''"
     >
-      <h1>Trang chủ</h1>
+      <div class="home-container-title">Danh sách nhân viên</div>
       <div class="search-form">
         <button @click="bindingData">Show All</button>
         <form @submit.prevent="filter()">
@@ -13,25 +13,29 @@
         </form>
       </div>
       <table>
-        <tr>
-          <th v-for="title in titles" :key="title">{{ title }}</th>
-        </tr>
-        <router-link
-          tag="tr"
-          v-for="emp in empList"
-          :key="emp.id"
-          :to="{ name: 'User', params: { id: emp.id } }"
-          class="employee-row"
-        >
-          <td>{{ emp.id }}</td>
-          <td>{{ emp.name }}</td>
-          <td>{{ emp.age }}</td>
-          <td>{{ emp.gender }}</td>
-          <td>{{ emp.contact }}</td>
-          <td :class="emp.status == 'Online' ? 'is-online' : 'is-offline'">
-            {{ emp.status }}
-          </td>
-        </router-link>
+        <thead>
+          <tr>
+            <th v-for="title in titles" :key="title">{{ title }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <router-link
+            tag="tr"
+            v-for="emp in empList"
+            :key="emp.id"
+            :to="{ name: 'User', params: { id: emp.id } }"
+            class="employee-row"
+          >
+            <td id="td-id">{{ emp.id }}</td>
+            <td>{{ emp.name }}</td>
+            <td>{{ emp.age }}</td>
+            <td>{{ emp.gender ? "Male" : "Female" }}</td>
+            <td>{{ emp.contact }}</td>
+            <td :class="emp.status == 'Online' ? 'is-online' : 'is-offline'">
+              {{ emp.status }}
+            </td>
+          </router-link>
+        </tbody>
       </table>
     </div>
     <div v-else class="manager-only"><h1>Manager Only!</h1></div>
@@ -40,26 +44,28 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { mapGetters } from "vuex";
 
 export default {
+  props: ["emps"],
   data() {
     return {
       empName: "",
       titles: ["ID", "Name", "Age", "Gender", "Contact", "Status"],
       isSingleDisplay: false,
-      empList: [],
+      empList: this.emps,
     };
   },
   computed: {
-    ...mapGetters(["isManager", "getListEmp"]),
+    ...mapGetters(["isManager"]),
   },
-  created() {
-    this.fetchEmpList();
-    this.empList = this.getListEmp;
+  created() {},
+  watch: {
+    emps() {
+      this.empList = this.emps;
+    },
   },
   methods: {
-    ...mapActions(["fetchEmpList"]),
     filter() {
       this.bindingData();
       this.empList = this.empList.filter((emp) =>
@@ -79,7 +85,7 @@ export default {
       this.isSingleDisplay = status;
     },
     bindingData() {
-      this.empList = this.getListEmp;
+      this.empList = this.emps;
     },
   },
 };

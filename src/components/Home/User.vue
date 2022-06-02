@@ -2,11 +2,12 @@
   <div class="user">
     <div class="header">
       <div class="header-img-box">
-        <img :src="emp.avatar" alt="" />
+        <img :src="require('@/assets/image/' + emp.avatar + '.jpg')" alt="" />
       </div>
       <div class="header-name-box">
         <p class="header-name">{{ emp.name }}</p>
         <p class="header-role">{{ role }}</p>
+        <unicon :name="isInputting ? 'pen' : 'save'" @click="editProfile" />
       </div>
     </div>
     <div class="body">
@@ -20,6 +21,7 @@
               name="input"
               :disabled="isInputting"
               :class="!isInputting ? 'input-toggle' : ''"
+              ref="empName"
             />
           </div>
           <div class="input-box">
@@ -30,6 +32,7 @@
               name="input"
               :disabled="isInputting"
               :class="!isInputting ? 'input-toggle' : ''"
+              ref="empAge"
             />
           </div>
           <div class="input-box">
@@ -40,6 +43,7 @@
               name="input"
               :disabled="isInputting"
               :class="!isInputting ? 'input-toggle' : ''"
+              ref="empGender"
             />
           </div>
           <div class="input-box">
@@ -50,6 +54,7 @@
               name="input"
               :disabled="isInputting"
               :class="!isInputting ? 'input-toggle' : ''"
+              ref="empContact"
             />
           </div>
           <div class="input-box">
@@ -60,26 +65,38 @@
               name="input"
               :disabled="isInputting"
               :class="!isInputting ? 'input-toggle' : ''"
+              ref="empAccount"
             />
           </div>
           <div class="input-box">
             <label for="input">Password: </label>
             <input
-              type="text"
-              :value="emp.password"
+              :type="hiddenPassword ? 'password' : 'text'"
+              :value="
+                hiddenPassword && isInputting
+                  ? '************************'
+                  : emp.password
+              "
               name="input"
               :disabled="isInputting"
               :class="!isInputting ? 'input-toggle' : ''"
+              ref="empPassword"
+            />
+            <unicon
+              id="password-icon"
+              :name="hiddenPassword ? 'eye' : 'eye-slash'"
+              @click="reformatPassword"
             />
           </div>
         </form>
       </div>
+      <div class="body-info-receiptBoard"></div>
     </div>
   </div>
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { mapGetters } from "vuex";
 export default {
   data() {
     return {
@@ -87,6 +104,7 @@ export default {
       emp: {},
       role: "",
       isInputting: true,
+      hiddenPassword: true,
     };
   },
   created() {
@@ -108,9 +126,32 @@ export default {
     ...mapGetters(["getEmp"]),
   },
   methods: {
-    ...mapActions(["fetchEmpList"]),
     setEmp(id) {
       this.$store.commit("SET_SINGLE_EMP", id);
+    },
+    reformatPassword() {
+      this.hiddenPassword = !this.hiddenPassword;
+    },
+    editProfile() {
+      this.isInputting = !this.isInputting;
+      if (this.isInputting) {
+        this.emp = {
+          id: this.emp.id,
+          name: this.$refs.empName.value,
+          age: this.$refs.empAge.value,
+          gender: this.$refs.empGender.value,
+          contact: this.$refs.empContact.value,
+          account: this.$refs.empAccount.value,
+          password: this.$refs.empPassword.value,
+          avatar: this.emp.avatar,
+          level: this.emp.level,
+          status: this.emp.status,
+        };
+        this.$store.dispatch("updateEmp", {
+          id: this.emp.id,
+          user: this.emp,
+        });
+      }
     },
   },
 };

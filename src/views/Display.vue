@@ -2,21 +2,29 @@
   <div class="main">
     <div class="success-alert">Access Successful!</div>
     <Sidebar class="sidebar" />
-    <keep-alive><router-view class="display"></router-view></keep-alive>
+    <keep-alive>
+      <router-view class="display" :emps="emps"></router-view>
+    </keep-alive>
   </div>
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 import Sidebar from "../components/Common Components/Sidebar.vue";
 export default {
   components: {
     Sidebar,
   },
+  data() {
+    return {
+      emps: this.getListEmp,
+    };
+  },
   computed: {
-    ...mapGetters(["componentName", "isAuthenticated"]),
+    ...mapGetters(["isAuthenticated", "getListEmp"]),
   },
   methods: {
+    ...mapActions(["fetchEmpList"]),
     successAlert() {
       const alertMessage = document.querySelector(".success-alert");
       if (this.isAuthenticated) {
@@ -29,10 +37,24 @@ export default {
       }
     },
   },
+  created() {
+    this.fetchEmpList();
+    this.emps = this.getListEmp;
+  },
   mounted() {
     if (sessionStorage.getItem("loaded") === null) {
       this.successAlert();
     }
+  },
+  watch: {
+    componentKey() {
+      console.log("key changed");
+    },
+  },
+  beforeUpdate() {
+    // console.log("updated");
+    // this.fetchEmpList();
+    this.emps = this.getListEmp;
   },
 };
 </script>
@@ -40,23 +62,17 @@ export default {
 <style lang="less" scoped>
 @import "~@/assets/variables.less";
 .main {
-  position: relative;
-  min-height: 100vh;
+  height: 100vh;
   margin: 0;
   padding: 0;
   background: white;
   overflow: hidden;
   display: flex;
-
-  .sidebar {
-    position: sticky;
-    width: 300px;
-    transition: all 0.3s ease;
-    overflow: hidden;
-  }
+  position: relative;
 
   .display {
     transition: all 0.3s ease;
+    flex-grow: 1;
   }
   .success-alert {
     position: absolute;

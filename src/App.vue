@@ -37,21 +37,8 @@ export default {
   padding: 0;
   margin: 0;
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
   overflow: hidden;
-}
-
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
 }
 
 * {

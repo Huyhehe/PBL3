@@ -14,6 +14,12 @@ import {
   uniBill,
   uniSignout,
   uniDesktop,
+  uniEye,
+  uniEyeSlash,
+  uniPen,
+  uniSave,
+  uniTrashAlt,
+  uniPlus,
 } from "vue-unicons/dist/icons";
 
 Unicon.add([
@@ -26,6 +32,12 @@ Unicon.add([
   uniBill,
   uniSignout,
   uniDesktop,
+  uniEye,
+  uniEyeSlash,
+  uniPen,
+  uniSave,
+  uniTrashAlt,
+  uniPlus,
 ]);
 Vue.use(Unicon);
 

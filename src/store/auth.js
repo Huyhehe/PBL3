@@ -6,24 +6,18 @@ export default {
     auth: {
       isAuthenticated: false,
     },
-    user: {
-      id: 1,
-      name: "Nguyễn Thành Huy",
-      level: {
-        isManager: true,
-      },
-      account: "huyhehe",
-      password: "123456",
-    },
+    user: {},
     listEmp: {},
     singleEmp: {},
   },
   mutations: {
     SIGN_IN(state, { userAccount, userPassword }) {
-      if (
-        userAccount == state.user.account &&
-        userPassword == state.user.password
-      ) {
+      state.listEmp.map((emp) => {
+        if (emp.account == userAccount) {
+          state.user = emp;
+        }
+      });
+      if (userPassword === state.user.password) {
         state.auth.isAuthenticated = true;
       }
 
@@ -67,6 +61,14 @@ export default {
         }
       }
     },
+    UPDATE_USER(state, user) {
+      if (state.user.id == user.id) {
+        state.user = user;
+      }
+    },
+    TEST(state, data) {
+      console.log(data);
+    },
   },
   getters: {
     isAuthenticated: (state) => state.auth.isAuthenticated,
@@ -74,8 +76,20 @@ export default {
     userName: (state) => state.user.name,
     getListEmp: (state) => state.listEmp,
     getEmp: (state) => state.singleEmp,
+    getUser: (state) => state.user,
   },
   actions: {
+    async loginRequest({ commit }, { userAccount, userPassword }) {
+      try {
+        const res = await axios.post(
+          "https://shopguitarapi.azurewebsites.net/Auth/login",
+          { userName: userAccount, password: userPassword }
+        );
+        commit("TEST", res.data.JSON());
+      } catch (err) {
+        console.error(err);
+      }
+    },
     checkLogin({ commit }, { userAccount, userPassword }) {
       commit("SIGN_IN", { userAccount, userPassword });
     },
@@ -85,6 +99,17 @@ export default {
         commit("SET_EMP_LIST", response.data);
       } catch (error) {
         console.log(error);
+      }
+    },
+    async updateEmp({ commit, dispatch }, payload) {
+      const id = payload.id;
+      const user = payload.user;
+      try {
+        const res = await axios.put(`http://localhost:3000/users/${id}`, user);
+        commit("UPDATE_USER", res.data);
+        dispatch("fetchEmpList");
+      } catch (e) {
+        console.error(e);
       }
     },
   },

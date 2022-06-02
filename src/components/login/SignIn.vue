@@ -72,10 +72,12 @@ export default {
     signIn() {
       const userAccount = this.userAccount;
       const userPassword = this.userPassword;
+      this.$store.dispatch("fetchEmpList");
       this.$store.dispatch("checkLogin", {
         userAccount,
         userPassword,
       });
+      this.$store.dispatch("loginRequest", { userAccount, userPassword });
       if (!this.isAuthenticated) {
         const alert = document.querySelector(".error-alert");
         alert.classList.add("show");
