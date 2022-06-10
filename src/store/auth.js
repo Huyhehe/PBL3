@@ -1,5 +1,6 @@
 import router from "@/router";
 import axios from "axios";
+const BASE = "https://shopguitar.azurewebsites.net";
 
 export default {
   state: {
@@ -9,7 +10,6 @@ export default {
     user: {},
     listEmp: {},
     singleEmp: {},
-    token: "",
   },
   mutations: {
     SIGN_IN(state, { userAccount, userPassword }) {
@@ -38,6 +38,7 @@ export default {
         JSON.stringify(state.auth.isAuthenticated)
       );
       sessionStorage.removeItem("loaded");
+      localStorage.removeItem("jwt");
     },
     SET_AUTHENTICATED(state) {
       if (sessionStorage.getItem("isAuthenticated") != null) {
@@ -47,17 +48,20 @@ export default {
       }
     },
     SET_EMP_LIST(state, listEmp) {
-      state.listEmp = listEmp;
-      for (const emp in listEmp) {
-        if (listEmp[emp].account == state.user.account) {
-          listEmp[emp].status = "Online";
-          break;
+      if (listEmp != null) {
+        for (const index in listEmp) {
+          listEmp[index].dateOfBirth = new Date(
+            new Date(listEmp[index].dateOfBirth).setHours(7)
+          )
+            .toISOString()
+            .slice(0, 10);
         }
+        state.listEmp = listEmp;
       }
     },
     SET_SINGLE_EMP(state, id) {
       for (const index in state.listEmp) {
-        if (id - 1 == index) {
+        if (id == state.listEmp[index].id) {
           state.singleEmp = state.listEmp[index];
         }
       }
@@ -67,17 +71,28 @@ export default {
         state.user = user;
       }
     },
-    TEST(state, { user, jwt }) {
-      state.token = "bearer " + jwt;
+    SET_USER(state, user) {
       state.user = user;
-      console.log(user);
+      state.user.dateOfBirth = new Date(new Date(user.dateOfBirth).setHours(7))
+        .toISOString()
+        .slice(0, 10);
+      state.auth.isAuthenticated = true;
+      sessionStorage.setItem(
+        "isAuthenticated",
+        JSON.stringify(state.auth.isAuthenticated)
+      );
       router.push("/");
     },
   },
   getters: {
     isAuthenticated: (state) => state.auth.isAuthenticated,
-    isManager: (state) => state.user.level.isManager,
-    userName: (state) => state.user.name,
+    isManager: (state) => {
+      if (state.user.role == "admin") {
+        return true;
+      }
+      return false;
+    },
+    userName: (state) => state.user.firstName + " " + state.user.lastName,
     getListEmp: (state) => state.listEmp,
     getEmp: (state) => state.singleEmp,
     getUser: (state) => state.user,
@@ -85,45 +100,71 @@ export default {
   actions: {
     async loginRequest({ commit }, { userAccount, userPassword }) {
       try {
-        const res = await axios.post(
-          "https://shopguitarapi.azurewebsites.net/Auth/login",
-          { userName: userAccount, password: userPassword }
-        );
+        const res = await axios.post(`${BASE}/Auth/login`, {
+          userName: userAccount,
+          password: userPassword,
+        });
         const jwt = res.data;
+        localStorage.setItem("jwt", jwt);
 
-        const user = await axios.get(
-          "https://shopguitarapi.azurewebsites.net/Auth/login",
+        const userRes = await axios.get(
+          `${BASE}/api/Employee/current-employee`,
           {
             headers: {
               Authorization: `Bearer ${jwt}`,
             },
           }
         );
-        commit("TEST", { user, jwt });
+        const user = userRes.data;
+        commit("SET_USER", user);
       } catch (err) {
         console.error(err);
       }
     },
-    checkLogin({ commit }, { userAccount, userPassword }) {
-      commit("SIGN_IN", { userAccount, userPassword });
-    },
     async fetchEmpList({ commit }) {
       try {
-        const response = await axios.get("http://localhost:3000/users");
-        commit("SET_EMP_LIST", response.data);
+        const jwt = localStorage.getItem("jwt");
+        const res = await axios.get(`${BASE}/api/Employee/employee`, {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        });
+        commit("SET_EMP_LIST", res.data);
       } catch (error) {
         console.log(error);
       }
     },
-    async updateEmp({ commit, dispatch }, payload) {
-      const id = payload.id;
-      const user = payload.user;
+    async updateEmp({ commit }, user) {
+      const jwt = localStorage.getItem("jwt");
       try {
-        const res = await axios.put(`http://localhost:3000/users/${id}`, user);
+        const res = await axios.put(
+          `${BASE}/api/Employee/update-employee-admin`,
+          user,
+          {
+            headers: {
+              Authorization: `Bearer ${jwt}`,
+            },
+          }
+        );
         commit("UPDATE_USER", res.data);
-        dispatch("fetchEmpList");
       } catch (e) {
-        console.error(e);
+        console.log(e);
+      }
+    },
+    async getCurrentUser({ commit }) {
+      const jwt = localStorage.getItem("jwt");
+      try {
+        const currentUser = await axios.get(
+          `${BASE}/api/Employee/current-employee`,
+          {
+            headers: {
+              Authorization: `Bearer ${jwt}`,
+            },
+          }
+        );
+        commit("SET_USER", currentUser.data);
+      } catch (e) {
+        console.log(e);
       }
     },
   },

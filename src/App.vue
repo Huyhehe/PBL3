@@ -19,11 +19,6 @@ export default {
   methods: {
     ...mapMutations(["SET_AUTHENTICATED"]),
   },
-  beforeDestroy() {
-    window.onunload(() => {
-      localStorage.clear();
-    });
-  },
 };
 </script>
 

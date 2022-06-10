@@ -3,6 +3,9 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 
+import { DatePicker } from "ant-design-vue";
+// import "ant-design-vue/dist/antd.css";
+
 import Unicon from "vue-unicons/dist/vue-unicons-vue2.umd";
 import {
   uniBars,
@@ -20,6 +23,8 @@ import {
   uniSave,
   uniTrashAlt,
   uniPlus,
+  uniAngleLeftB,
+  uniCameraPlus,
 } from "vue-unicons/dist/icons";
 
 Unicon.add([
@@ -38,8 +43,11 @@ Unicon.add([
   uniSave,
   uniTrashAlt,
   uniPlus,
+  uniAngleLeftB,
+  uniCameraPlus,
 ]);
 Vue.use(Unicon);
+Vue.use(DatePicker);
 
 Vue.config.productionTip = false;
 

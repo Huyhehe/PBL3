@@ -52,11 +52,11 @@ export default {
         {
           title: "Thông báo",
           icon: "envelope-alt",
-          sub: 20,
+          // sub: 20,
           name: "Message",
         },
         {
-          title: "Xuất hóa đơn",
+          title: "Hóa đơn",
           icon: "bill",
           name: "Receipt",
         },

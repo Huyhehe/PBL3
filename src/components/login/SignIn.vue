@@ -69,16 +69,11 @@ export default {
         alertMessage.classList.remove("show");
       }, 3000);
     },
-    signIn() {
+    async signIn() {
       const userAccount = this.userAccount;
       const userPassword = this.userPassword;
-      this.$store.dispatch("fetchEmpList");
-      this.$store.dispatch("checkLogin", {
-        userAccount,
-        userPassword,
-      });
-      this.$store.dispatch("loginRequest", { userAccount, userPassword });
-      if (!this.isAuthenticated) {
+      await this.$store.dispatch("loginRequest", { userAccount, userPassword });
+      if (localStorage.getItem("jwt") == null) {
         const alert = document.querySelector(".error-alert");
         alert.classList.add("show");
         this.alertMessage();

@@ -7,7 +7,7 @@
     >
       <div class="home-container-title">Danh sách nhân viên</div>
       <div class="search-form">
-        <button @click="bindingData">Show All</button>
+        <button @click="showAll">Show All</button>
         <form @submit.prevent="filter()">
           <input v-model="empName" type="text" placeholder="Search by name" />
         </form>
@@ -27,12 +27,12 @@
             class="employee-row"
           >
             <td id="td-id">{{ emp.id }}</td>
-            <td>{{ emp.name }}</td>
-            <td>{{ emp.age }}</td>
+            <td>{{ emp.firstName }} {{ emp.lastName }}</td>
+            <td>{{ emp.dateOfBirth }}</td>
             <td>{{ emp.gender ? "Male" : "Female" }}</td>
-            <td>{{ emp.contact }}</td>
-            <td :class="emp.status == 'Online' ? 'is-online' : 'is-offline'">
-              {{ emp.status }}
+            <td>{{ emp.phoneNumber }}</td>
+            <td :class="emp.role == 'admin' ? 'is-manager' : 'is-employee'">
+              {{ emp.role == "admin" ? "Quản lý" : "Nhân viên" }}
             </td>
           </router-link>
         </tbody>
@@ -51,13 +51,19 @@ export default {
   data() {
     return {
       empName: "",
-      titles: ["ID", "Name", "Age", "Gender", "Contact", "Status"],
+      titles: ["id", "tên", "ngày sinh", "giới tính", "liên lạc", "chức vụ"],
       isSingleDisplay: false,
       empList: this.emps,
     };
   },
   computed: {
     ...mapGetters(["isManager"]),
+    dateOfBirth(data) {
+      return new Date(data)
+        .toLocaleDateString()
+        .replace("/", "-")
+        .replace("/", "-");
+    },
   },
   created() {},
   watch: {
@@ -67,9 +73,9 @@ export default {
   },
   methods: {
     filter() {
-      this.bindingData();
+      this.empList = this.emps;
       this.empList = this.empList.filter((emp) =>
-        this.removeAccents(emp.name)
+        this.removeAccents(emp.firstName + emp.lastName)
           .toLowerCase()
           .includes(this.removeAccents(this.empName).toLowerCase())
       );
@@ -84,8 +90,9 @@ export default {
     singleDisplay(status) {
       this.isSingleDisplay = status;
     },
-    bindingData() {
+    showAll() {
       this.empList = this.emps;
+      this.empName = "";
     },
   },
 };

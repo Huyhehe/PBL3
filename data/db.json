@@ -45,16 +45,37 @@
   ],
   "message": [
     {
-      "id": 1,
-      "title": "First title",
-      "body": "lorem sakdaskda",
-      "datetime": "31/05/2022 13:00:00 PM"
+      "titleName": "1",
+      "content": "123123\n",
+      "datePost": "6/4/2022 8:37:44 PM",
+      "createUserName": "Trương Hiếu",
+      "dateUpdate": "6/4/2022 8:43:25 PM",
+      "updateUserName": "Trương Hiếu",
+      "id": 1
     },
     {
-      "id": 2,
-      "title": "Second title",
-      "body": "lorem sakdaskda",
-      "datetime": "31/05/2022 13:30:01 PM"
+      "titleName": "",
+      "content": "",
+      "datePost": "6/4/2022 8:37:45 PM",
+      "createUserName": "Trương Hiếu",
+      "updateUserName": "",
+      "id": 2
+    },
+    {
+      "titleName": "",
+      "content": "",
+      "datePost": "6/4/2022 8:37:48 PM",
+      "createUserName": "Trương Hiếu",
+      "updateUserName": "",
+      "id": 4
+    },
+    {
+      "titleName": "",
+      "content": "",
+      "datePost": "6/4/2022 8:37:49 PM",
+      "createUserName": "Trương Hiếu",
+      "updateUserName": "",
+      "id": 5
     }
   ]
 }
