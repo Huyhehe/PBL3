@@ -73,6 +73,7 @@ export default {
   .display {
     transition: all 0.3s ease;
     flex-grow: 1;
+    // max-width: 1500px;
   }
   .success-alert {
     position: absolute;

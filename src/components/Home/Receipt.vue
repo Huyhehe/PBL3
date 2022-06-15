@@ -37,11 +37,11 @@
             </div>
             <div class="input-box">
               <span>Từ ngày</span>
-              <a-date-picker v-model="dateOfBirth" :disabled="isInputting" />
+              <a-date-picker v-model="fromDate" />
             </div>
             <div class="input-box">
               <span>Đến ngày</span>
-              <a-date-picker v-model="dateOfBirth" :disabled="isInputting" />
+              <a-date-picker v-model="toDate" />
             </div>
           </div>
           <div class="display-box">
@@ -169,6 +169,8 @@ export default {
       },
       receipt: {},
       receiptList: [],
+      fromDate: null,
+      toDate: null,
     };
   },
   created() {

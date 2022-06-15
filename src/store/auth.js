@@ -67,6 +67,7 @@ export default {
       }
     },
     UPDATE_USER(state, user) {
+      console.log(user);
       if (state.user.id == user.id) {
         state.user = user;
       }
@@ -139,6 +140,23 @@ export default {
       try {
         const res = await axios.put(
           `${BASE}/api/Employee/update-employee-admin`,
+          user,
+          {
+            headers: {
+              Authorization: `Bearer ${jwt}`,
+            },
+          }
+        );
+        commit("UPDATE_USER", res.data);
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    async updateInfo({ commit }, user) {
+      const jwt = localStorage.getItem("jwt");
+      try {
+        const res = await axios.put(
+          `${BASE}/api/Employee/update-employee`,
           user,
           {
             headers: {

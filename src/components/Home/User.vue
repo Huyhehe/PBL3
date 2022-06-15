@@ -170,7 +170,7 @@ export default {
     this.$emit("changeDisplay", false);
   },
   computed: {
-    ...mapGetters(["getEmp"]),
+    ...mapGetters(["getEmp", "getUser"]),
   },
   methods: {
     setEmp(id) {
@@ -219,7 +219,13 @@ export default {
 
         console.log(newIncomming);
         await this.$store.dispatch("updateEmp", newIncomming);
-        this.$store.dispatch("fetchEmpList");
+        await this.$store.dispatch("fetchEmpList");
+        if (newEmp.employeeId == this.getUser.id) {
+          sessionStorage.setItem("userChanged", true);
+          await this.$store.dispatch("getCurrentUser");
+        } else {
+          sessionStorage.setItem("userChanged", false);
+        }
       }
     },
     previewFile(e) {

@@ -127,7 +127,12 @@ export default {
     };
   },
   created() {
-    // this.$store.dispatch("getCurrentUser");
+    // const flag = JSON.parse(sessionStorage.getItem("userChanged"));
+    // console.log(typeof flag);
+    // if (flag == true) {
+    //   await this.$store.dispatch("getCurrentUser");
+    //   sessionStorage.setItem("userChanged", false);
+    // }
     this.user = this.getUser;
     this.salary = this.user.salary[0];
     this.title = this.user.title[0];
@@ -159,7 +164,6 @@ export default {
       if (this.isInputting) {
         const newEmp = {
           employeeId: this.user.id,
-          managerId: this.user.managerId,
           firstName: this.user.firstName,
           lastName: this.user.lastName,
           gender: this.$refs.gender.checked,
@@ -167,17 +171,10 @@ export default {
           phoneNumber: this.user.phoneNumber,
           email: this.user.email,
           address: this.user.address,
-          role: this.user.role,
-          imageFile: this.user.avatar,
-          titleName: this.title.name,
-          dateIn: this.title.dateIn,
-          dateOut: this.title.dateOut,
-          salary: this.salary.salary,
         };
 
         const newIncomming = new FormData();
         newIncomming.append("employeeId", newEmp.employeeId);
-        newIncomming.append("managerId", newEmp.managerId);
         newIncomming.append("firstName", newEmp.firstName);
         newIncomming.append("lastName", newEmp.lastName);
         newIncomming.append("gender", newEmp.gender);
@@ -185,15 +182,10 @@ export default {
         newIncomming.append("phoneNumber", newEmp.phoneNumber);
         newIncomming.append("email", newEmp.email);
         newIncomming.append("address", newEmp.address);
-        newIncomming.append("role", newEmp.role);
         newIncomming.append("imageFile", this.selectedFile);
-        newIncomming.append("titleName", newEmp.titleName);
-        newIncomming.append("dateIn", newEmp.dateIn);
-        newIncomming.append("dateOut", newEmp.dateOut);
-        newIncomming.append("salary", newEmp.salary);
 
         console.log(newIncomming);
-        await this.$store.dispatch("updateEmp", newIncomming);
+        await this.$store.dispatch("updateInfo", newIncomming);
         this.$store.dispatch("fetchEmpList");
       }
     },
