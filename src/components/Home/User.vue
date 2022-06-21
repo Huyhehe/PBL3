@@ -142,8 +142,8 @@ export default {
       id: this.$route.params.id,
       emp: {},
       isInputting: true,
-      salary: null,
-      title: "",
+      salary: {},
+      title: {},
       dateOfBirth: null,
       newImage: "",
       selectedFile: null,
@@ -152,8 +152,16 @@ export default {
   created() {
     this.setEmp(this.id);
     this.emp = this.getEmp;
-    this.salary = this.emp.salary[0];
-    this.title = this.emp.title[0];
+    if (this.emp.salary.length != 0) {
+      this.salary = this.emp.salary[0];
+    } else {
+      this.salary.salary = 0;
+    }
+    if (this.emp.title.length != 0) {
+      this.title = this.emp.title[0];
+    } else {
+      this.title.name = "Part time";
+    }
     this.dateOfBirth = this.emp.dateOfBirth;
   },
   mounted() {
@@ -182,6 +190,12 @@ export default {
     async editProfile() {
       this.isInputting = !this.isInputting;
       if (this.isInputting) {
+        if (this.title.dateIn == null) {
+          this.title.dateIn = new Date().toLocaleDateString();
+        }
+        if (this.title.dateOut == null) {
+          this.title.dateOut = new Date().toLocaleDateString();
+        }
         const newEmp = {
           employeeId: this.id,
           managerId: this.emp.managerId,
@@ -199,6 +213,7 @@ export default {
           dateOut: this.title.dateOut,
           salary: this.salary.salary,
         };
+        console.log(newEmp);
 
         const newIncomming = new FormData();
         newIncomming.append("employeeId", newEmp.employeeId);

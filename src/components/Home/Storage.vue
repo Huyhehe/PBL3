@@ -6,14 +6,19 @@
     <div class="storage-display">
       <div class="toolbox">
         <div class="toolbox-type">
-          <select>
-            <option value="" disabled selected>Phân loại</option>
+          <select v-model="type" @change="selectFilter">
+            <option value="All">Tất cả</option>
             <option value="Guitar">Guitar</option>
             <option value="Phụ kiện">Phụ kiện</option>
           </select>
         </div>
         <div class="toolbox-brand">
-          <input type="text" placeholder="Hãng sản xuất" />
+          <input
+            type="text"
+            placeholder="Hãng sản xuất"
+            v-model="brand"
+            @change="searchFilter"
+          />
         </div>
         <div class="toolbox-add">
           <button @click="changeDisplay(true)">
@@ -35,13 +40,15 @@
               </div>
               <div class="card-content">
                 <span class="card-content-brand">{{ commodity.brand }}</span>
-                <span class="card-content-name">{{ commodity.name }}</span>
+                <span class="card-content-name">{{
+                  truncate(commodity.name, 30)
+                }}</span>
                 <span class="card-content-price"
                   >{{ formatMoney(commodity.price) }} VND</span
                 >
               </div>
               <div class="card-button">
-                <button>Thêm vào giỏ hàng</button>
+                <button @click="addToCart(commodity)">Thêm vào giỏ hàng</button>
               </div>
               <button
                 class="del-button"
@@ -151,10 +158,12 @@ export default {
         type: "Guitar",
       },
       selectedFile: null,
+      type: "All",
+      brand: "",
     };
   },
-  created() {
-    this.$store.dispatch("fetchCommodityList");
+  async created() {
+    await this.$store.dispatch("fetchCommodityList");
     this.commodityList = this.getAllCommodity;
   },
   computed: {
@@ -211,6 +220,35 @@ export default {
         .reduce(function (acc, num, i) {
           return num + (num != "-" && i && !(i % 3) ? "," : "") + acc;
         }, "");
+    },
+    selectFilter() {
+      this.commodityList = this.getAllCommodity;
+      if (this.type == "Guitar") {
+        this.commodityList = this.commodityList.filter(
+          (commodity) => commodity.type == "Guitar"
+        );
+      } else if (this.type == "All") {
+        this.commodityList = this.getAllCommodity;
+      } else {
+        this.commodityList = this.commodityList.filter(
+          (commodity) => commodity.type != "Guitar"
+        );
+      }
+    },
+    searchFilter() {
+      this.commodityList = this.getAllCommodity;
+      if (this.brand != "") {
+        this.commodityList = this.commodityList.filter(
+          (commodity) =>
+            commodity.brand.toLowerCase() == this.brand.toLowerCase()
+        );
+      }
+    },
+    truncate(str, n) {
+      return str.length > n ? str.substr(0, n - 1) + "\u2026" : str;
+    },
+    addToCart(commodity) {
+      this.$store.commit("SET_SELECTED_LIST", commodity);
     },
   },
 };

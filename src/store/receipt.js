@@ -4,6 +4,7 @@ const BASE = "https://shopguitar.azurewebsites.net";
 export default {
   state: {
     receiptList: [],
+    selectedList: [],
   },
   mutations: {
     SET_LIST(state, data) {
@@ -20,9 +21,43 @@ export default {
       }
       state.receiptList = data;
     },
+    SET_SELECTED_LIST(state, payload) {
+      let flag = true;
+      payload.quantity = 1;
+      for (const index in state.selectedList) {
+        if (state.selectedList[index].commodityId == payload.commodityId) {
+          flag = false;
+          state.selectedList[index].quantity += 1;
+          console.log("same");
+        }
+      }
+      if (flag) {
+        state.selectedList.push(payload);
+      }
+    },
+    REMOVE_SELECTED_ITEM(state, id) {
+      state.selectedList = state.selectedList.filter(
+        (item) => item.commodityId != id
+      );
+    },
+    CHANGE_SELECTED_QUANTITY(state, payload) {
+      for (const index in state.selectedList) {
+        if ((state.selectedList[index].commodityId = payload.id)) {
+          if (payload.flag) {
+            state.selectedList[index].quantity += 1;
+          } else {
+            state.selectedList[index].quantity -= 1;
+            if (state.selectedList[index].quantity == 0) {
+              this.commit("REMOVE_SELECTED_ITEM", payload.id);
+            }
+          }
+        }
+      }
+    },
   },
   getters: {
     getAllReceipt: (state) => state.receiptList,
+    getSelectedList: (state) => state.selectedList,
   },
   actions: {
     async getAllReceipt({ commit }) {

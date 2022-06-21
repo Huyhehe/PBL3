@@ -9,6 +9,16 @@
               type="email"
               class="signUp-inputs"
               required
+              name="email"
+              placeholder=" "
+            />
+            <label for="account" class="signUp-inputs-labels">Email</label>
+          </div>
+          <div class="signUp-inputs-wrapper">
+            <input
+              type="text"
+              class="signUp-inputs"
+              required
               name="account"
               placeholder=" "
             />
@@ -56,7 +66,13 @@
 </template>
 
 <script>
-export default {};
+export default {
+  data() {
+    return {
+      newUser: {},
+    };
+  },
+};
 </script>
 
 <style lang="less" scoped>
