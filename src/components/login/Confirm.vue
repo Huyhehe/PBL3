@@ -3,11 +3,20 @@
     <div class="container">
       <h1 class="title">Nhập mã xác thực</h1>
       <div class="body">
-        <form>
+        <form v-if="!registeredSuccessful && !isReVerify">
           <span>Mã xác thực đã được gửi đến email của bạn</span>
           <input type="text" placeholder="Code..." v-model="token" />
           <span @click="resend" id="resend">Gửi lại mã xác thực</span>
-          <button @click="verify">Xác thực</button>
+          <button @click.prevent="verify">Xác thực</button>
+        </form>
+        <form v-if="!registeredSuccessful && isReVerify">
+          <span>Vui lòng nhập mã nhân viên của bạn</span>
+          <input type="text" placeholder="Enter" v-model="userID" />
+          <button @click.prevent="resend">Gửi</button>
+        </form>
+        <form v-if="registeredSuccessful">
+          <span>Bạn đã đăng ký thành công!</span>
+          <button @click="redirectLogin">Đăng nhập</button>
         </form>
       </div>
     </div>
@@ -19,16 +28,34 @@ export default {
   data() {
     return {
       token: "",
+      registeredSuccessful: false,
+      isReVerify: false,
+      userID: "",
     };
   },
+  mounted() {
+    if (JSON.parse(sessionStorage.getItem("reVerify"))) {
+      this.isReVerify = true;
+    }
+  },
   methods: {
-    resend() {
-      const userId = JSON.parse(sessionStorage.getItem("registerSucceed"));
-      this.$store.dispatch("refreshRegisterToken", userId);
+    async resend() {
+      let userID = this.userID;
+      if (!this.isReVerify) {
+        userID = JSON.parse(sessionStorage.getItem("registerSucceed"));
+      }
+      await this.$store.dispatch("refreshRegisterToken", userID);
+      sessionStorage.setItem("reVerify", JSON.stringify(false));
+      this.isReVerify = false;
     },
     async verify() {
       const token = this.token;
+      console.log(typeof token);
       await this.$store.dispatch("verifyRegister", token);
+      this.registeredSuccessful = this.$store.getters.registerSuccess;
+    },
+    redirectLogin() {
+      this.$router.push({ name: "Login" });
     },
   },
 };

@@ -1,6 +1,7 @@
 <template>
   <div class="signIn">
-    <span class="error-alert">Password doesn't match or unexist account</span>
+    <!-- <span class="error-alert">Password doesn't match or unexist account</span> -->
+    <Alert :mess="alertMsg" />
     <div class="signIn-container">
       <h1 class="signIn-title">Đăng nhập</h1>
       <div class="signIn-body">
@@ -52,11 +53,16 @@
 
 <script>
 import { mapState } from "vuex";
+import Alert from "../Common Components/Alert.vue";
 export default {
+  components: {
+    Alert,
+  },
   data() {
     return {
       userAccount: "",
       userPassword: "",
+      alertMsg: "",
     };
   },
   computed: {
@@ -64,6 +70,7 @@ export default {
   },
   methods: {
     alertMessage() {
+      this.alertMsg = this.$store.getters.getWarningMessage;
       const alertMessage = document.querySelector(".error-alert");
       setTimeout(() => {
         alertMessage.classList.remove("show");

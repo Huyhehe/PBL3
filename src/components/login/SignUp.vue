@@ -1,5 +1,6 @@
 <template>
   <div class="sign-up">
+    <Alert :mess="alertMsg" />
     <div class="signUp-container">
       <h1 class="signUp-title">Đăng ký</h1>
       <div class="signUp-body">
@@ -93,18 +94,28 @@
       </div>
       <div class="sign-in">
         <form>
-          <label>Đã có tài khoản?</label>
-          <router-link to="/login">Đăng nhập</router-link>
+          <div>
+            <label>Đã có tài khoản?</label>
+            <router-link to="/login">Đăng nhập</router-link>
+          </div>
+          <div>
+            <label>Xác thực lại?</label>
+            <button @click="reVerify">Xác thực</button>
+          </div>
         </form>
       </div>
       <div class="signUp-extra-content"></div>
     </div>
-    <router-view class="confirm-token" />
+    <keep-alive><router-view class="confirm-token" /></keep-alive>
   </div>
 </template>
 
 <script>
+import Alert from "../Common Components/Alert.vue";
 export default {
+  components: {
+    Alert,
+  },
   data() {
     return {
       newUser: {
@@ -114,9 +125,17 @@ export default {
         confirmPassword: "",
         imageFile: null,
       },
+      alertMsg: "",
     };
   },
   methods: {
+    alertMessage() {
+      this.alertMsg = this.$store.getters.getWarningMessage;
+      const alertMessage = document.querySelector(".error-alert");
+      setTimeout(() => {
+        alertMessage.classList.remove("show");
+      }, 3000);
+    },
     validateConfirmPassword(e) {
       const inputBox = e.target;
       const warning = document.getElementById("warningCPW");
@@ -176,8 +195,17 @@ export default {
           newUser.userID
         ) {
           this.$router.push({ name: "ConfirmToken" });
+        } else {
+          const alert = document.querySelector(".error-alert");
+          alert.classList.add("show");
+          this.alertMessage();
         }
       }
+    },
+    reVerify(e) {
+      e.preventDefault();
+      sessionStorage.setItem("reVerify", JSON.stringify(true));
+      this.$router.push({ name: "ConfirmToken" });
     },
   },
 };

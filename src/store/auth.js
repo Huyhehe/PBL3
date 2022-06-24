@@ -11,6 +11,7 @@ export default {
     listEmp: {},
     singleEmp: {},
     warningMessage: "",
+    registerSuccessful: false,
   },
   mutations: {
     SIGN_IN(state, { userAccount, userPassword }) {
@@ -106,12 +107,13 @@ export default {
     },
     VERIFY_REGISTER(state, message) {
       console.log(message);
+      state.registerSuccessful = true;
     },
   },
   getters: {
     isAuthenticated: (state) => state.auth.isAuthenticated,
     isManager: (state) => {
-      if (state.user.role == "admin") {
+      if (state.user.role.toLowerCase() == "admin") {
         return true;
       }
       return false;
@@ -120,6 +122,8 @@ export default {
     getListEmp: (state) => state.listEmp,
     getEmp: (state) => state.singleEmp,
     getUser: (state) => state.user,
+    registerSuccess: (state) => state.registerSuccessful,
+    getWarningMessage: (state) => state.warningMessage,
   },
   actions: {
     async loginRequest({ commit }, { userAccount, userPassword }) {
@@ -143,6 +147,7 @@ export default {
         commit("SET_USER", user);
       } catch (err) {
         console.error(err);
+        commit("SET_WARNING_MESSAGE", err.response.data);
       }
     },
     async fetchEmpList({ commit }) {
@@ -253,11 +258,13 @@ export default {
       }
     },
     async verifyRegister({ commit }, token) {
+      console.log(typeof token);
       try {
-        const res = await axios.post(`${BASE}/Auth/verify-account`, token);
+        const res = await axios.post(`${BASE}/Auth/verify-account/${token}`);
         commit("VERIFY_REGISTER", res.data);
       } catch (e) {
         console.log(e);
+        commit("SET_WARNING_MESSAGE", e.response.status);
       }
     },
   },
