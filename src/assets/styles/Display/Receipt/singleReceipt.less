@@ -12,13 +12,13 @@
   justify-content: center;
   align-items: center;
   .container {
-    width: 800px;
-    height: 80%;
+    width: 650px;
+    height: 78%;
     background-color: @background-color-light;
     display: flex;
     flex-direction: column;
     padding: 80px 100px;
-    gap: 50px;
+    gap: 20px;
     button {
       background-color: white;
       cursor: pointer;
@@ -37,6 +37,8 @@
       }
       .right {
         color: @primary-text-color-light;
+        display: flex;
+        flex-direction: column;
       }
     }
 
@@ -54,6 +56,10 @@
           font-weight: bold;
         }
       }
+
+      .customer {
+        text-align: right;
+      }
     }
 
     .total {
@@ -66,11 +72,11 @@
         font-weight: bold;
 
         .quantity {
-          width: 80px;
+          width: 20%;
         }
 
         .name {
-          width: 300px;
+          width: 40%;
           text-overflow: ellipsis;
         }
 
@@ -84,7 +90,7 @@
       }
 
       .pay-list {
-        height: 150px;
+        height: 125px;
         overflow-y: auto;
         .pay-list-item {
           display: flex;
@@ -93,11 +99,10 @@
           margin-bottom: 10px;
 
           .quantity {
-            width: 80px;
+            width: 20%;
           }
 
           .name {
-            width: 300px;
             text-overflow: ellipsis;
           }
 
@@ -140,6 +145,22 @@
         &:hover {
           background-color: @primary-text-color-light-hover;
           color: @background-color-light;
+        }
+      }
+    }
+  }
+}
+
+@media screen and (min-width: 1550px) {
+  .single-receipt {
+    .container {
+      width: 700px;
+      height: 80%;
+      gap: 50px;
+
+      .total {
+        .pay-list {
+          height: 150px;
         }
       }
     }

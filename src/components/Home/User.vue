@@ -213,27 +213,25 @@ export default {
           dateOut: this.title.dateOut,
           salary: this.salary.salary,
         };
-        console.log(newEmp);
 
-        const newIncomming = new FormData();
-        newIncomming.append("employeeId", newEmp.employeeId);
-        newIncomming.append("managerId", newEmp.managerId);
-        newIncomming.append("firstName", newEmp.firstName);
-        newIncomming.append("lastName", newEmp.lastName);
-        newIncomming.append("gender", newEmp.gender);
-        newIncomming.append("dateOfBirth", newEmp.dateOfBirth);
-        newIncomming.append("phoneNumber", newEmp.phoneNumber);
-        newIncomming.append("email", newEmp.email);
-        newIncomming.append("address", newEmp.address);
-        newIncomming.append("role", newEmp.role);
-        newIncomming.append("imageFile", this.selectedFile);
-        newIncomming.append("titleName", newEmp.titleName);
-        newIncomming.append("dateIn", newEmp.dateIn);
-        newIncomming.append("dateOut", newEmp.dateOut);
-        newIncomming.append("salary", newEmp.salary);
+        const newIncoming = new FormData();
+        newIncoming.append("employeeId", newEmp.employeeId);
+        newIncoming.append("managerId", newEmp.managerId);
+        newIncoming.append("firstName", newEmp.firstName);
+        newIncoming.append("lastName", newEmp.lastName);
+        newIncoming.append("gender", newEmp.gender);
+        newIncoming.append("dateOfBirth", newEmp.dateOfBirth);
+        newIncoming.append("phoneNumber", newEmp.phoneNumber);
+        newIncoming.append("email", newEmp.email);
+        newIncoming.append("address", newEmp.address);
+        newIncoming.append("role", newEmp.role);
+        newIncoming.append("imageFile", this.selectedFile);
+        newIncoming.append("titleName", newEmp.titleName);
+        newIncoming.append("dateIn", newEmp.dateIn);
+        newIncoming.append("dateOut", newEmp.dateOut);
+        newIncoming.append("salary", newEmp.salary);
 
-        console.log(newIncomming);
-        await this.$store.dispatch("updateEmp", newIncomming);
+        await this.$store.dispatch("updateEmp", newIncoming);
         await this.$store.dispatch("fetchEmpList");
         if (newEmp.employeeId == this.getUser.id) {
           sessionStorage.setItem("userChanged", true);

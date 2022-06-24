@@ -8,6 +8,7 @@ import Message from "../components/Home/Message.vue";
 import Receipt from "../components/Home/Receipt.vue";
 import Storage from "../components/Home/Storage.vue";
 import Setting from "../components/Home/PageSetting.vue";
+import Confirm from "../components/login/Confirm.vue";
 
 Vue.use(VueRouter);
 
@@ -60,8 +61,6 @@ const routes = [
     path: "/login",
     name: "Login",
     component: () => import("../views/Login.vue"),
-
-    children: [],
   },
   {
     path: "/forgotPassword",
@@ -72,6 +71,13 @@ const routes = [
     path: "/signup",
     name: "Signup",
     component: () => import("../components/login/SignUp.vue"),
+    children: [
+      {
+        path: "confirmToken",
+        name: "ConfirmToken",
+        component: Confirm,
+      },
+    ],
   },
 ];
 

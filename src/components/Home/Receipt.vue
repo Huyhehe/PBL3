@@ -97,7 +97,7 @@
           >Tổng: VND {{ formatMoney(totalPrice) }}
         </span>
         <div class="receipt-info-button">
-          <button>Hoàn tất</button>
+          <button @click="addReceipt">Hoàn tất</button>
         </div>
       </div>
       <span class="line-barrier"></span>
@@ -167,7 +167,11 @@ export default {
     await this.$store.dispatch("getAllReceipt");
     this.receiptList = this.getAllReceipt;
     this.selectedList = this.getSelectedList;
-    await this.updateTotalPrice();
+  },
+  watch: {
+    selectedList() {
+      this.updateTotalPrice();
+    },
   },
   computed: {
     ...mapGetters(["getAllReceipt", "getSelectedList"]),
@@ -229,6 +233,35 @@ export default {
       this.$store.commit("CHANGE_SELECTED_QUANTITY", { id, flag });
       this.selectedList = this.getSelectedList;
       this.updateTotalPrice();
+    },
+    async addReceipt() {
+      const shortenList = [];
+      for (const index in this.selectedList) {
+        shortenList[index] = {
+          item1: this.selectedList[index].commodityId,
+          item2: this.selectedList[index].quantity,
+        };
+      }
+      const newReceipt = {
+        commodity: shortenList,
+        customerName: this.customer.customerName,
+        customerPhoneNumber: this.customer.customerPhoneNumber,
+        customerAddress: this.customer.customerAddress,
+      };
+      await this.$store.dispatch("addReceipt", newReceipt);
+      await this.$store.dispatch("getAllReceipt");
+      this.receiptList = this.getAllReceipt;
+      this.changeDisplay(false);
+      this.resetInput();
+    },
+    resetInput() {
+      this.$store.commit("RESET_SELECTED_LIST");
+      this.selectedList = this.getSelectedList;
+      this.customer = {
+        customerName: "",
+        customerPhoneNumber: "",
+        customerAddress: "",
+      };
     },
   },
 };

@@ -9,6 +9,10 @@ import { mapGetters, mapMutations } from "vuex";
 export default {
   created() {
     this.SET_AUTHENTICATED();
+    if (JSON.parse(sessionStorage.getItem("registerSucceed"))) {
+      this.$router.push({ name: "ConfirmToken" });
+      return;
+    }
     if (this.isAuthenticated == false) {
       this.$router.replace("/login");
     }

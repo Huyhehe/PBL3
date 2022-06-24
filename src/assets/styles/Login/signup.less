@@ -6,21 +6,27 @@
 }
 
 .sign-up {
-  display: flex;
   height: 100vh;
+  display: flex;
   justify-content: center;
   align-items: center;
   background-image: url("./background.jpg");
   background-size: cover;
   background-repeat: no-repeat;
+
+  .confirm-token {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
 }
 
 .signUp-container {
-  width: 25%;
-  height: 60vh;
+  width: 28%;
+  height: 80vh;
   background-color: rgba(0, 0, 0, 0.75);
   padding: 4em;
-  // box-sizing: border-box;
   border-radius: 5px;
 
   .signUp-title {
@@ -40,8 +46,8 @@
 
       .signUp-inputs-wrapper {
         width: 100%;
-        position: relative;
 
+        position: relative;
         .signUp-inputs {
           width: 100%;
           height: 50px;
@@ -68,6 +74,42 @@
           pointer-events: none;
           color: #999;
           transition: all 0.3s ease;
+        }
+
+        //may cause layout breaking if not wrapped
+        .wrapper-input {
+          position: relative;
+          .signUp-inputs {
+            width: 100%;
+            height: 50px;
+            font-size: 16px;
+            border: none;
+            margin: 1em auto;
+            padding: 0 20px;
+            box-sizing: border-box;
+            border-radius: 4px;
+            background-color: #333;
+            outline: none;
+            &:not(:placeholder-shown) + .signUp-inputs-labels,
+            &:focus + .signUp-inputs-labels {
+              top: 0;
+              transform: translateY(-30%);
+            }
+          }
+          .signUp-inputs-labels {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            user-select: none;
+            pointer-events: none;
+            color: #999;
+            transition: all 0.3s ease;
+          }
+        }
+        .wrapper-warning {
+          color: #e50914;
+          display: none;
         }
 
         #submit-button {
@@ -124,4 +166,11 @@ input:-webkit-autofill {
 
 .signUp-extra-content {
   margin: 20px 0;
+}
+
+@media screen and (min-width: 1550px) {
+  .signUp-container {
+    width: 22.5%;
+    height: 70vh;
+  }
 }

@@ -5,51 +5,88 @@
       <div class="signUp-body">
         <form>
           <div class="signUp-inputs-wrapper">
-            <input
-              type="email"
-              class="signUp-inputs"
-              required
-              name="email"
-              placeholder=" "
-            />
-            <label for="account" class="signUp-inputs-labels">Email</label>
+            <div class="wrapper-input">
+              <input
+                type="text"
+                class="signUp-inputs"
+                required
+                name="id"
+                placeholder=" "
+                v-model="newUser.userID"
+                @blur="validateUserID"
+                @input="validateUserID"
+              />
+              <label for="id" class="signUp-inputs-labels">Mã nhân viên</label>
+            </div>
+            <span class="wrapper-warning" id="warningID"
+              >Vui lòng nhập trường này</span
+            >
           </div>
           <div class="signUp-inputs-wrapper">
-            <input
-              type="text"
-              class="signUp-inputs"
-              required
-              name="account"
-              placeholder=" "
-            />
-            <label for="account" class="signUp-inputs-labels">Tài khoản</label>
+            <div class="wrapper-input">
+              <input
+                type="text"
+                class="signUp-inputs"
+                required
+                name="account"
+                placeholder=" "
+                v-model="newUser.userName"
+                @blur="validateUserName"
+                @input="validateUserName"
+              />
+              <label for="account" class="signUp-inputs-labels"
+                >Tài khoản</label
+              >
+            </div>
+            <span class="wrapper-warning" id="warningUN"
+              >Vui lòng nhập trường này</span
+            >
           </div>
           <div class="signUp-inputs-wrapper">
-            <input
-              type="password"
-              class="signUp-inputs"
-              required
-              placeholder=" "
-            />
-            <label for="password" class="signUp-inputs-labels">Mật khẩu</label>
+            <div class="wrapper-input">
+              <input
+                type="password"
+                class="signUp-inputs"
+                required
+                placeholder=" "
+                v-model="newUser.password"
+                @input="validatePassword"
+                @blur="validatePassword"
+              />
+              <label for="password" class="signUp-inputs-labels"
+                >Mật khẩu</label
+              >
+            </div>
+            <span class="wrapper-warning" id="warningPW"
+              >Mật khẩu phải có ít nhất 6 kí tự</span
+            >
           </div>
           <div class="signUp-inputs-wrapper">
-            <input
-              type="password"
-              class="signUp-inputs"
-              required
-              placeholder=" "
-            />
-            <label for="confirmPassword" class="signUp-inputs-labels"
-              >Nhập lại mật khẩu</label
+            <div class="wrapper-input">
+              <input
+                type="password"
+                class="signUp-inputs"
+                required
+                placeholder=" "
+                v-model="newUser.confirmPassword"
+                @blur="validateConfirmPassword"
+                @input="validateConfirmPassword"
+              />
+              <label for="confirmPassword" class="signUp-inputs-labels"
+                >Nhập lại mật khẩu</label
+              >
+            </div>
+            <span class="wrapper-warning" id="warningCPW"
+              >Không trùng khớp với mật khẩu đã nhập</span
             >
           </div>
           <div class="signUp-inputs-wrapper">
             <input
-              type="submit"
+              type="button"
               value="Đăng ký"
               class="signUp-inputs"
               id="submit-button"
+              @click="register"
             />
           </div>
         </form>
@@ -62,6 +99,7 @@
       </div>
       <div class="signUp-extra-content"></div>
     </div>
+    <router-view class="confirm-token" />
   </div>
 </template>
 
@@ -69,8 +107,78 @@
 export default {
   data() {
     return {
-      newUser: {},
+      newUser: {
+        userID: "",
+        userName: "",
+        password: "",
+        confirmPassword: "",
+        imageFile: null,
+      },
     };
+  },
+  methods: {
+    validateConfirmPassword(e) {
+      const inputBox = e.target;
+      const warning = document.getElementById("warningCPW");
+      if (this.newUser.confirmPassword != this.newUser.password) {
+        inputBox.style.border = "1px solid red";
+        warning.style.display = "block";
+      } else {
+        inputBox.style.border = "";
+        warning.style.display = "";
+      }
+    },
+    validatePassword(e) {
+      const inputBox = e.target;
+      const warning = document.getElementById("warningPW");
+      if (this.newUser.password.length < 6) {
+        inputBox.style.border = "1px solid red";
+        warning.style.display = "block";
+      } else {
+        inputBox.style.border = "";
+        warning.style.display = "";
+      }
+    },
+    validateUserID(e) {
+      const inputBox = e.target;
+      const warning = document.getElementById("warningID");
+      if (this.newUser.userID.length < 1) {
+        inputBox.style.border = "1px solid red";
+        warning.style.display = "block";
+      } else {
+        inputBox.style.border = "";
+        warning.style.display = "";
+      }
+    },
+    validateUserName(e) {
+      const inputBox = e.target;
+      const warning = document.getElementById("warningUN");
+      if (this.newUser.userName.length < 1) {
+        inputBox.style.border = "1px solid red";
+        warning.style.display = "block";
+      } else {
+        inputBox.style.border = "";
+        warning.style.display = "";
+      }
+    },
+    async register(e) {
+      if (
+        this.newUser.userID.length > 0 &&
+        this.newUser.userName.length > 0 &&
+        this.newUser.password.length > 5 &&
+        this.newUser.password == this.newUser.confirmPassword
+      ) {
+        e.preventDefault();
+        const newUser = this.newUser;
+        await this.$store.dispatch("register", newUser);
+        if (
+          JSON.parse(sessionStorage.getItem("registerSucceed")) ==
+          newUser.userID
+        ) {
+          this.$router.push({ name: "ConfirmToken" });
+        }
+      }
+    },
   },
 };
 </script>

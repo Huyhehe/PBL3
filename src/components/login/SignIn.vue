@@ -43,7 +43,7 @@
       <div class="sign-up">
         <form>
           <label>Chưa có tài khoản?</label>
-          <router-link to="/Signup">Đăng ký</router-link>
+          <router-link :to="{ name: 'Signup' }">Đăng ký</router-link>
         </form>
       </div>
     </div>

@@ -10,6 +10,7 @@ export default {
     user: {},
     listEmp: {},
     singleEmp: {},
+    warningMessage: "",
   },
   mutations: {
     SIGN_IN(state, { userAccount, userPassword }) {
@@ -32,6 +33,9 @@ export default {
       }
     },
     SIGN_OUT(state) {
+      state.user = {};
+      state.listEmp = {};
+      state.singleEmp = {};
       state.auth.isAuthenticated = false;
       sessionStorage.setItem(
         "isAuthenticated",
@@ -83,6 +87,25 @@ export default {
         JSON.stringify(state.auth.isAuthenticated)
       );
       router.push("/");
+    },
+    ADD_NEW_EMP(state, data) {
+      console.log(data);
+    },
+    REGISTER(state, payload) {
+      console.log(payload.newUser.userID);
+      sessionStorage.setItem(
+        "registerSucceed",
+        JSON.stringify(payload.newUser.userID)
+      );
+    },
+    REFRESH_REGISTER_TOKEN(state, payload) {
+      console.log(payload);
+    },
+    SET_WARNING_MESSAGE(state, message) {
+      state.warningMessage = message;
+    },
+    VERIFY_REGISTER(state, message) {
+      console.log(message);
     },
   },
   getters: {
@@ -169,6 +192,23 @@ export default {
         console.log(e);
       }
     },
+    async addNewEmp({ commit }, newEmp) {
+      const jwt = localStorage.getItem("jwt");
+      try {
+        const res = await axios.post(
+          `${BASE}/api/Employee/add-employee`,
+          newEmp,
+          {
+            headers: {
+              Authorization: `Bearer ${jwt}`,
+            },
+          }
+        );
+        commit("ADD_NEW_EMP", res.data);
+      } catch (e) {
+        console.log(e);
+      }
+    },
     async getCurrentUser({ commit }) {
       const jwt = localStorage.getItem("jwt");
       try {
@@ -181,6 +221,41 @@ export default {
           }
         );
         commit("SET_USER", currentUser.data);
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    async register({ commit }, newUser) {
+      const newAccount = new FormData();
+      newAccount.append("userID", newUser.userID);
+      newAccount.append("userName", newUser.userName);
+      newAccount.append("password", newUser.password);
+      newAccount.append("confirmPassword", newUser.confirmPassword);
+      newAccount.append("imageFile", newUser.imageFile);
+      try {
+        const res = await axios.post(`${BASE}/Auth/register`, newAccount);
+        commit("REGISTER", { res: res, newUser: newUser });
+      } catch (e) {
+        console.log(e.response.status);
+        if (e.response.status == 400) {
+          commit("SET_WARNING_MESSAGE", e.response.data);
+        }
+      }
+    },
+    async refreshRegisterToken({ commit }, userId) {
+      try {
+        const res = await axios.post(
+          `${BASE}/Auth/refresh-verify-account-token/${userId}`
+        );
+        commit("REFRESH_REGISTER_TOKEN", res);
+      } catch (e) {
+        console.log(e.response.status);
+      }
+    },
+    async verifyRegister({ commit }, token) {
+      try {
+        const res = await axios.post(`${BASE}/Auth/verify-account`, token);
+        commit("VERIFY_REGISTER", res.data);
       } catch (e) {
         console.log(e);
       }

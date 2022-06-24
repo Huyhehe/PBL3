@@ -23,15 +23,15 @@ export default {
     },
     SET_SELECTED_LIST(state, payload) {
       let flag = true;
-      payload.quantity = 1;
-      for (const index in state.selectedList) {
-        if (state.selectedList[index].commodityId == payload.commodityId) {
+      state.selectedList.map((item) => {
+        if (item.commodityId == payload.commodityId) {
           flag = false;
-          state.selectedList[index].quantity += 1;
-          console.log("same");
+          item.quantity += 1;
         }
-      }
+      });
       if (flag) {
+        payload.quantity = 1;
+        console.log(payload);
         state.selectedList.push(payload);
       }
     },
@@ -41,18 +41,24 @@ export default {
       );
     },
     CHANGE_SELECTED_QUANTITY(state, payload) {
-      for (const index in state.selectedList) {
-        if ((state.selectedList[index].commodityId = payload.id)) {
+      state.selectedList.map((item) => {
+        if (item.commodityId == payload.id) {
           if (payload.flag) {
-            state.selectedList[index].quantity += 1;
+            item.quantity += 1;
           } else {
-            state.selectedList[index].quantity -= 1;
-            if (state.selectedList[index].quantity == 0) {
+            item.quantity -= 1;
+            if (item.quantity == 0) {
               this.commit("REMOVE_SELECTED_ITEM", payload.id);
             }
           }
         }
-      }
+      });
+    },
+    RESET_SELECTED_LIST(state) {
+      state.selectedList = [];
+    },
+    ADD_RECEIPT(state, data) {
+      console.log(data);
     },
   },
   getters: {
@@ -72,6 +78,23 @@ export default {
         commit("SET_LIST", res.data);
       } catch (e) {
         console.log(e);
+      }
+    },
+    async addReceipt({ commit }, receipt) {
+      const jwt = localStorage.getItem("jwt");
+      try {
+        const res = await axios.post(
+          `${BASE}/api/Receipt/add-receipt`,
+          receipt,
+          {
+            headers: {
+              Authorization: `Bearer ${jwt}`,
+            },
+          }
+        );
+        commit("ADD_RECEIPT", res.data);
+      } catch (err) {
+        console.log(err);
       }
     },
   },

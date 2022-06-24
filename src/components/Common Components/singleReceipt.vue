@@ -8,6 +8,7 @@
         </div>
         <div class="right">
           <span>Ngày xuất hóa đơn {{ receipt.date }}</span>
+          <span>Shop Guitar K20DUT</span>
         </div>
       </div>
       <div class="container-item info">

@@ -152,8 +152,8 @@
     transition: all 0.3s ease;
 
     .message-add-box {
-      width: 600px;
-      height: 800px;
+      width: 30vw;
+      height: 70vh;
       background-color: @background-color-light;
       display: flex;
       flex-direction: column;
@@ -172,7 +172,7 @@
         flex-grow: 1;
 
         .message-add-box-header {
-          font-size: 3rem;
+          font-size: 2rem;
           color: @primary-text-color-light;
         }
 
@@ -235,6 +235,21 @@
               color: @background-color-light;
             }
           }
+        }
+      }
+    }
+  }
+}
+
+@media screen and (min-width: 1550px) {
+  .message-popup {
+    .message-add-box {
+      width: 600px;
+      height: 800px;
+
+      form {
+        .message-add-box-header {
+          font-size: 3rem;
         }
       }
     }
