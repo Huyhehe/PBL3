@@ -31,6 +31,7 @@ export default {
       registeredSuccessful: false,
       isReVerify: false,
       userID: "",
+      alertMsg: "",
     };
   },
   mounted() {
@@ -39,20 +40,36 @@ export default {
     }
   },
   methods: {
+    alertMessage() {
+      this.alertMsg = this.$store.getters.getWarningMessage;
+      this.$emit("alertReVerify", this.alertMsg);
+      const alertMessage = document.querySelector(".error-alert");
+      setTimeout(() => {
+        alertMessage.classList.remove("show");
+      }, 3000);
+    },
     async resend() {
       let userID = this.userID;
       if (!this.isReVerify) {
         userID = JSON.parse(sessionStorage.getItem("registerSucceed"));
       }
       await this.$store.dispatch("refreshRegisterToken", userID);
-      sessionStorage.setItem("reVerify", JSON.stringify(false));
-      this.isReVerify = false;
+      this.isReVerify = JSON.parse(sessionStorage.getItem("reVerify"));
+      if (this.isReVerify) {
+        const alert = document.querySelector(".error-alert");
+        alert.classList.add("show");
+        this.alertMessage();
+      }
     },
     async verify() {
       const token = this.token;
-      console.log(typeof token);
       await this.$store.dispatch("verifyRegister", token);
-      this.registeredSuccessful = this.$store.getters.registerSuccess;
+      this.registeredSuccessful = await this.$store.getters.registerSuccess;
+      if (!this.registeredSuccessful) {
+        const alert = document.querySelector(".error-alert");
+        alert.classList.add("show");
+        this.alertMessage();
+      }
     },
     redirectLogin() {
       this.$router.push({ name: "Login" });
@@ -71,13 +88,14 @@ export default {
 .confirm {
   height: 100vh;
   background-image: url("~@/assets/image/background.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
   display: flex;
   justify-content: center;
   align-items: center;
 
   .container {
     width: 25%;
-    // height: 35vh;
     background-color: rgba(0, 0, 0, 0.75);
     padding: 4em;
     border-radius: 5px;

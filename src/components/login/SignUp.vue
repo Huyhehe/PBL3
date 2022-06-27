@@ -106,7 +106,9 @@
       </div>
       <div class="signUp-extra-content"></div>
     </div>
-    <keep-alive><router-view class="confirm-token" /></keep-alive>
+    <keep-alive
+      ><router-view class="confirm-token" @alertReVerify="alertReVerify"
+    /></keep-alive>
   </div>
 </template>
 
@@ -129,6 +131,9 @@ export default {
     };
   },
   methods: {
+    alertReVerify(alertMsg) {
+      this.alertMsg = alertMsg;
+    },
     alertMessage() {
       this.alertMsg = this.$store.getters.getWarningMessage;
       const alertMessage = document.querySelector(".error-alert");

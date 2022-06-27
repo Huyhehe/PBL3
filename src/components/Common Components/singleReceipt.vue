@@ -1,5 +1,5 @@
 <template>
-  <div class="single-receipt">
+  <div class="single-receipt" id="myDiv">
     <div class="container">
       <div class="container-item title">
         <div class="left">
@@ -50,6 +50,7 @@
       </div>
       <div class="container-item exit">
         <button @click="popUpDown">Thoát</button>
+        <button @click="printDiv('myDiv')">In</button>
       </div>
     </div>
   </div>
@@ -78,6 +79,16 @@ export default {
         .reduce(function (acc, num, i) {
           return num + (num != "-" && i && !(i % 3) ? "," : "") + acc;
         }, "");
+    },
+    printDiv(divName) {
+      var printContents = document.getElementById(divName).outerHTML;
+      var originalContents = document.body.outerHTML;
+
+      document.body.outerHTML = printContents;
+
+      window.print();
+
+      document.body.innerHTML = originalContents;
     },
   },
 };

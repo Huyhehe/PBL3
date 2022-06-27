@@ -12,24 +12,6 @@
             <form>
               <div class="input-box-name">
                 <div class="input-box-name-item">
-                  <label>ID nhân viên</label>
-                  <input
-                    placeholder="Enter"
-                    type="text"
-                    v-model="emp.employeeId"
-                  />
-                </div>
-                <div class="input-box-name-item">
-                  <label>ID quản lý</label>
-                  <input
-                    placeholder="Enter"
-                    type="text"
-                    v-model="emp.managerId"
-                  />
-                </div>
-              </div>
-              <div class="input-box-name">
-                <div class="input-box-name-item">
                   <label>Tên</label>
                   <input
                     placeholder="Enter"
@@ -46,7 +28,7 @@
                   />
                 </div>
               </div>
-              <div class="input-box-salary">
+              <div class="input-box-salary input-box-name">
                 <div class="input-box-salary-item">
                   <span class="input-box-salary-header">Cấp</span>
                   <div class="input-box">
@@ -55,6 +37,14 @@
                       <option value="Employee">Nhân viên</option>
                     </select>
                   </div>
+                </div>
+                <div class="input-box-name-item">
+                  <label>ID quản lý</label>
+                  <input
+                    placeholder="Enter"
+                    type="text"
+                    v-model="emp.managerId"
+                  />
                 </div>
               </div>
               <div class="input-box-salary">
@@ -143,7 +133,6 @@ export default {
   data() {
     return {
       emp: {
-        employeeId: null,
         managerId: null,
         firstName: "",
         lastName: "",
@@ -205,7 +194,6 @@ export default {
       dateIn = dateIn.toISOString().slice(0, 10);
 
       const newIncoming = new FormData();
-      newIncoming.append("employeeId", this.emp.employeeId);
       newIncoming.append("managerId", this.emp.managerId);
       newIncoming.append("firstName", this.emp.firstName);
       newIncoming.append("lastName", this.emp.lastName);

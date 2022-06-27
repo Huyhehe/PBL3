@@ -12,6 +12,9 @@ export default {
     singleEmp: {},
     warningMessage: "",
     registerSuccessful: false,
+    sendMailSucceed: false,
+    resetPasswordTokenValid: false,
+    resetPasswordSuccessful: false,
   },
   mutations: {
     SIGN_IN(state, { userAccount, userPassword }) {
@@ -109,6 +112,33 @@ export default {
       console.log(message);
       state.registerSuccessful = true;
     },
+    SET_FORGOT_PASSWORD_SENDMAIL_STATE(state, message) {
+      console.log(message);
+      if (message == "reset") {
+        state.sendMailSucceed = false;
+        return;
+      }
+      state.sendMailSucceed = true;
+    },
+    REFRESH_FORGOT_PASSWORD_TOKEN(state, payload) {
+      console.log(payload);
+    },
+    SET_RESET_PASSWORD_TOKEN(state, payload) {
+      console.log(payload);
+      if (payload == "reset") {
+        state.resetPasswordTokenValid = false;
+        return;
+      }
+      state.resetPasswordTokenValid = true;
+    },
+    SET_RESET_PASSWORD_STATUS(state, payload) {
+      console.log(payload);
+      if (payload == "reset") {
+        state.resetPasswordSuccessful = false;
+        return;
+      }
+      state.resetPasswordSuccessful = true;
+    },
   },
   getters: {
     isAuthenticated: (state) => state.auth.isAuthenticated,
@@ -124,6 +154,9 @@ export default {
     getUser: (state) => state.user,
     registerSuccess: (state) => state.registerSuccessful,
     getWarningMessage: (state) => state.warningMessage,
+    getSendMailState: (state) => state.sendMailSucceed,
+    getResetPasswordTokenValid: (state) => state.resetPasswordTokenValid,
+    getResetPasswordSuccessful: (state) => state.resetPasswordSuccessful,
   },
   actions: {
     async loginRequest({ commit }, { userAccount, userPassword }) {
@@ -240,6 +273,7 @@ export default {
       try {
         const res = await axios.post(`${BASE}/Auth/register`, newAccount);
         commit("REGISTER", { res: res, newUser: newUser });
+        sessionStorage.removeItem("registerSucceed");
       } catch (e) {
         console.log(e.response.status);
         if (e.response.status == 400) {
@@ -253,8 +287,10 @@ export default {
           `${BASE}/Auth/refresh-verify-account-token/${userId}`
         );
         commit("REFRESH_REGISTER_TOKEN", res);
+        sessionStorage.setItem("reVerify", JSON.stringify(false));
       } catch (e) {
-        console.log(e.response.status);
+        console.log(e);
+        commit("SET_WARNING_MESSAGE", e.response.data);
       }
     },
     async verifyRegister({ commit }, token) {
@@ -263,8 +299,50 @@ export default {
         const res = await axios.post(`${BASE}/Auth/verify-account/${token}`);
         commit("VERIFY_REGISTER", res.data);
       } catch (e) {
+        console.log(e.response.data);
+        commit("SET_WARNING_MESSAGE", e.response.data);
+      }
+    },
+    async forgotPassword({ commit }, email) {
+      try {
+        const res = await axios.post(`${BASE}/Auth/forgot-password/${email}`);
+        commit("SET_FORGOT_PASSWORD_SENDMAIL_STATE", res.data);
+      } catch (e) {
         console.log(e);
-        commit("SET_WARNING_MESSAGE", e.response.status);
+        commit("SET_WARNING_MESSAGE", e.response.data);
+      }
+    },
+    async verifyResetPassword({ commit }, token) {
+      try {
+        const res = await axios.post(
+          `${BASE}/Auth/verify-reset-password/${token}`
+        );
+        commit("SET_RESET_PASSWORD_TOKEN", res.data);
+      } catch (e) {
+        console.log(e.response.data);
+        commit("SET_WARNING_MESSAGE", e.response.data);
+      }
+    },
+    async refreshResetPasswordToken({ commit }, userId) {
+      try {
+        const res = await axios.post(
+          `${BASE}/Auth/refresh-reset-password-token/${userId}`
+        );
+        commit("REFRESH_FORGOT_PASSWORD_TOKEN", res.data);
+      } catch (e) {
+        console.log(e.response.data);
+        commit("SET_WARNING_MESSAGE", e.response.data);
+      }
+    },
+    async resetPassword({ commit }, newIncoming) {
+      try {
+        const res = await axios.post(
+          `${BASE}/Auth/reset-password`,
+          newIncoming
+        );
+        commit("SET_RESET_PASSWORD_STATUS", res.data);
+      } catch (e) {
+        console.log(e);
       }
     },
   },

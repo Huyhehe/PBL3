@@ -20,6 +20,7 @@
     top: 0;
     left: 0;
     width: 100%;
+    z-index: 10;
   }
 }
 
@@ -149,12 +150,17 @@ input:-webkit-autofill {
   justify-content: left;
   form {
     font-size: 20px;
-    a {
+    a,
+    button {
       margin: 0 10px;
       background: transparent;
       border: none;
       cursor: pointer;
       font-size: 20px;
+    }
+
+    button:hover {
+      color: #40a9ff;
     }
   }
 }
@@ -171,7 +177,7 @@ input:-webkit-autofill {
 
 @media screen and (min-width: 1550px) {
   .signUp-container {
-    width: 22.5%;
+    width: 25%;
     height: 70vh;
   }
 }

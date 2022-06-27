@@ -1,6 +1,6 @@
 <template>
-  <div class="alert">
-    <span class="error-alert title">{{ message }}</span>
+  <div class="alert error-alert">
+    <span class="title">{{ message }}</span>
   </div>
 </template>
 
@@ -9,7 +9,7 @@ export default {
   props: ["mess"],
   data() {
     return {
-      message: "",
+      message: this.mess,
     };
   },
   watch: {
@@ -31,6 +31,7 @@ export default {
   padding: 20px 10px;
   transition: all 0.2s ease-out;
   opacity: 0;
+  z-index: 100;
   &.show {
     transform: translateX(-10%);
     opacity: 1;
@@ -45,7 +46,7 @@ export default {
     overflow: hidden;
     width: 100%;
     height: 7.5px;
-    background: #d4626d;
+    background-color: #d4626d;
     animation: alertAnimation 0.2s;
   }
 }
