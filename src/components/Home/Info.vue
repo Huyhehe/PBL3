@@ -1,5 +1,8 @@
 <template>
   <div class="info user">
+    <div class="title">
+      <span>Cài đặt</span>
+    </div>
     <div class="header">
       <div class="header-img-box">
         <div v-if="!isInputting" class="change-icon" @click="chooseFile">
@@ -210,4 +213,27 @@ export default {
 
 <style lang="less" scoped>
 @import "~@/assets/styles/Display/Reusable/user.less";
+
+.user {
+  padding: 1.5rem 50px;
+}
+
+.title {
+  font-size: 2.5rem;
+  color: @primary-text-color-light;
+  padding: 0.5rem 0;
+  margin-bottom: 2rem;
+  text-align: center;
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 1px;
+    width: 100%;
+    background-color: #c3d1e3;
+  }
+}
 </style>

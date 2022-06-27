@@ -15,6 +15,7 @@ export default {
     sendMailSucceed: false,
     resetPasswordTokenValid: false,
     resetPasswordSuccessful: false,
+    changePasswordSuccessful: false,
   },
   mutations: {
     SIGN_IN(state, { userAccount, userPassword }) {
@@ -139,6 +140,14 @@ export default {
       }
       state.resetPasswordSuccessful = true;
     },
+    SET_CHANGE_PASSWORD_STATUS(state, payload) {
+      console.log(payload);
+      if (payload == "reset") {
+        state.changePasswordSuccessful = false;
+        return;
+      }
+      state.changePasswordSuccessful = true;
+    },
   },
   getters: {
     isAuthenticated: (state) => state.auth.isAuthenticated,
@@ -157,8 +166,10 @@ export default {
     getSendMailState: (state) => state.sendMailSucceed,
     getResetPasswordTokenValid: (state) => state.resetPasswordTokenValid,
     getResetPasswordSuccessful: (state) => state.resetPasswordSuccessful,
+    getChangePasswordSuccessful: (state) => state.changePasswordSuccessful,
   },
   actions: {
+    //USER
     async loginRequest({ commit }, { userAccount, userPassword }) {
       try {
         const res = await axios.post(`${BASE}/Auth/login`, {
@@ -183,6 +194,23 @@ export default {
         commit("SET_WARNING_MESSAGE", err.response.data);
       }
     },
+    async getCurrentUser({ commit }) {
+      const jwt = localStorage.getItem("jwt");
+      try {
+        const currentUser = await axios.get(
+          `${BASE}/api/Employee/current-employee`,
+          {
+            headers: {
+              Authorization: `Bearer ${jwt}`,
+            },
+          }
+        );
+        commit("SET_USER", currentUser.data);
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    //EMPLOYEE
     async fetchEmpList({ commit }) {
       try {
         const jwt = localStorage.getItem("jwt");
@@ -247,22 +275,7 @@ export default {
         console.log(e);
       }
     },
-    async getCurrentUser({ commit }) {
-      const jwt = localStorage.getItem("jwt");
-      try {
-        const currentUser = await axios.get(
-          `${BASE}/api/Employee/current-employee`,
-          {
-            headers: {
-              Authorization: `Bearer ${jwt}`,
-            },
-          }
-        );
-        commit("SET_USER", currentUser.data);
-      } catch (e) {
-        console.log(e);
-      }
-    },
+    //REGISTER
     async register({ commit }, newUser) {
       const newAccount = new FormData();
       newAccount.append("userID", newUser.userID);
@@ -343,6 +356,24 @@ export default {
         commit("SET_RESET_PASSWORD_STATUS", res.data);
       } catch (e) {
         console.log(e);
+      }
+    },
+    async changePassword({ commit }, newIncoming) {
+      const jwt = localStorage.getItem("jwt");
+      try {
+        const res = await axios.post(
+          `${BASE}/Auth/change-password`,
+          newIncoming,
+          {
+            headers: {
+              Authorization: `Bearer ${jwt}`,
+            },
+          }
+        );
+        commit("SET_CHANGE_PASSWORD_STATUS", res.data);
+      } catch (e) {
+        console.log(e);
+        commit("SET_WARNING_MESSAGE", e.response.data);
       }
     },
   },

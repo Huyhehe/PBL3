@@ -127,7 +127,7 @@
         .wrapper {
           box-sizing: border-box;
           overflow: hidden;
-          max-width: 95%;
+          width: 250px;
 
           // border-radius: 8px;
 
@@ -255,6 +255,7 @@
     padding: 0 50px;
     display: flex;
     flex-direction: column;
+    gap: 2rem;
 
     .adding-header {
       button {
@@ -284,7 +285,6 @@
     }
 
     .adding-body {
-      margin-top: 5rem;
       height: 75%;
       display: flex;
       flex-direction: column;
@@ -383,13 +383,13 @@
   transform: none;
 }
 
-@media screen and (min-width: 1550px) {
+@media screen and (max-width: 1650px) {
   .storage {
     .storage-display {
       .main {
         .commodity-container {
           .wrapper {
-            max-width: 250px;
+            width: 225px;
           }
         }
       }

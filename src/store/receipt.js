@@ -69,7 +69,7 @@ export default {
     async getAllReceipt({ commit }) {
       try {
         const jwt = localStorage.getItem("jwt");
-        const res = await axios.get(`${BASE}/api/Receipt/receipt`, {
+        const res = await axios.get(`${BASE}/api/Receipt/receipt-sales`, {
           headers: {
             Authorization: `Bearer ${jwt}`,
           },

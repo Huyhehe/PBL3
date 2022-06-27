@@ -137,6 +137,32 @@
               />
             </div>
           </div>
+          <div class="right">
+            <div class="input-box">
+              <span>Tên nhà cung cấp</span>
+              <input
+                type="text"
+                placeholder="Enter"
+                v-model="newCommodity.enterpriseName"
+              />
+            </div>
+            <div class="input-box">
+              <span>Số điện thoại nhà cung cấp</span>
+              <input
+                type="text"
+                placeholder="Enter"
+                v-model="newCommodity.enterprisePhoneNumber"
+              />
+            </div>
+            <div class="input-box">
+              <span>Địa chỉ nhà cung cấp</span>
+              <input
+                type="text"
+                placeholder="Enter"
+                v-model="newCommodity.enterpriseAddress"
+              />
+            </div>
+          </div>
         </div>
       </div>
       <div class="adding-button">
@@ -200,6 +226,15 @@ export default {
       newIncomming.append("price", this.newCommodity.price);
       newIncomming.append("warrantyTime", this.newCommodity.warrantyTime);
       newIncomming.append("imageFile", this.selectedFile);
+      newIncomming.append("enterpriseName", this.newCommodity.enterpriseName);
+      newIncomming.append(
+        "enterprisePhoneNumber",
+        this.newCommodity.enterprisePhoneNumber
+      );
+      newIncomming.append(
+        "enterpriseAddress",
+        this.newCommodity.enterpriseAddress
+      );
       await this.$store.dispatch("addCommodity", newIncomming);
       await this.$store.dispatch("fetchCommodityList");
       this.commodityList = this.getAllCommodity;

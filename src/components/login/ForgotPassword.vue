@@ -48,7 +48,7 @@
                 placeholder=" "
                 v-model="newIncoming.password"
               />
-              <label for="password" class="input-labels">Mật khẩu</label>
+              <label for="password" class="input-labels">Mật khẩu mới</label>
             </div>
           </div>
           <div class="input-wrapper">
