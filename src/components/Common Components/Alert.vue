@@ -31,7 +31,8 @@ export default {
   padding: 20px 10px;
   transition: all 0.2s ease-out;
   opacity: 0;
-  z-index: 100;
+  z-index: 1000;
+  color: @background-color-light;
   &.show {
     transform: translateX(-10%);
     opacity: 1;

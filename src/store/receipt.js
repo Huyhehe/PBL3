@@ -5,6 +5,7 @@ export default {
   state: {
     receiptList: [],
     selectedList: [],
+    lineChartList: [],
   },
   mutations: {
     SET_LIST(state, data) {
@@ -60,10 +61,14 @@ export default {
     ADD_RECEIPT(state, data) {
       console.log(data);
     },
+    SET_LINECHART_LIST(state, data) {
+      state.lineChartList = data;
+    },
   },
   getters: {
     getAllReceipt: (state) => state.receiptList,
     getSelectedList: (state) => state.selectedList,
+    getLineChartList: (state) => state.lineChartList,
   },
   actions: {
     async getAllReceipt({ commit }) {
@@ -95,6 +100,22 @@ export default {
         commit("ADD_RECEIPT", res.data);
       } catch (err) {
         console.log(err);
+      }
+    },
+    async getLineChartData({ commit }, payload) {
+      const jwt = localStorage.getItem("jwt");
+      try {
+        const res = await axios.get(
+          `${BASE}/api/Receipt/revenue/${payload.fromDate}/${payload.toDate}`,
+          {
+            headers: {
+              Authorization: `Bearer ${jwt}`,
+            },
+          }
+        );
+        commit("SET_LINECHART_LIST", res.data);
+      } catch (e) {
+        console.log(e);
       }
     },
   },

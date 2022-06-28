@@ -1,5 +1,6 @@
 <template>
   <div class="receipt">
+    <Alert :mess="alertMsg" />
     <div class="receipt-header">
       <span>Hóa đơn</span>
     </div>
@@ -33,10 +34,6 @@
         <div class="receipt-box-board">
           <div class="search-box">
             <div class="input-box">
-              <span>Hãng sản xuất</span>
-              <input type="text" placeholder="Enter" />
-            </div>
-            <div class="input-box">
               <span>Từ ngày</span>
               <a-date-picker v-model="fromDate" />
             </div>
@@ -44,15 +41,24 @@
               <span>Đến ngày</span>
               <a-date-picker v-model="toDate" />
             </div>
+            <div class="button-box">
+              <button @click="updateData">Xem</button>
+            </div>
           </div>
           <div class="display-box">
-            <table>
+            <!-- <table>
               <thead>
                 <tr>
                   <th v-for="title in titles" :key="title">{{ title }}</th>
                 </tr>
               </thead>
-            </table>
+            </table> -->
+            <LineChart :revenue="revenue" />
+            <div class="final-info">
+              <span id="red">-{{ getMoneyOut }}</span>
+              <span id="green">+{{ getMoneyIn }}</span>
+              <span>Tổng cộng: {{ getFinalTotal }}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -138,12 +144,17 @@
 </template>
 
 <script>
+import LineChart from "../Common Components/LineChart.vue";
 import axios from "axios";
 import { mapGetters } from "vuex";
-import singleReceipt from "../../components/Common Components/singleReceipt.vue";
+import singleReceipt from "../Common Components/singleReceipt.vue";
+import Alert from "../Common Components/Alert.vue";
+
 export default {
   components: {
     singleReceipt,
+    LineChart,
+    Alert,
   },
   data() {
     return {
@@ -161,6 +172,8 @@ export default {
       empName: "",
       selectedList: [],
       totalPrice: 0,
+      revenue: [],
+      alertMsg: "",
     };
   },
   async created() {
@@ -172,11 +185,49 @@ export default {
     selectedList() {
       this.updateTotalPrice();
     },
+    fromDate() {
+      this.fromDate = new Date(new Date(this.fromDate).setHours(7))
+        .toISOString()
+        .slice(0, 10);
+    },
+    toDate() {
+      this.toDate = new Date(new Date(this.toDate).setHours(7))
+        .toISOString()
+        .slice(0, 10);
+    },
   },
   computed: {
     ...mapGetters(["getAllReceipt", "getSelectedList"]),
+    getFinalTotal() {
+      let final = 0;
+      this.revenue.map((r) => {
+        final += r.moneyIn - r.moneyOut;
+      });
+      return this.formatMoney(final);
+    },
+    getMoneyIn() {
+      let moneyIn = 0;
+      this.revenue.map((r) => {
+        moneyIn += r.moneyIn;
+      });
+      return this.formatMoney(moneyIn);
+    },
+    getMoneyOut() {
+      let moneyOut = 0;
+      this.revenue.map((r) => {
+        moneyOut += r.moneyOut;
+      });
+      return this.formatMoney(moneyOut);
+    },
   },
   methods: {
+    alertMessage() {
+      this.alertMsg = this.$store.getters.getWarningMessage;
+      const alertMessage = document.querySelector(".error-alert");
+      setTimeout(() => {
+        alertMessage.classList.remove("show");
+      }, 3000);
+    },
     changeDisplay(flag) {
       const addingPage = document.querySelector(".receipt-add");
       if (flag) {
@@ -262,6 +313,20 @@ export default {
         customerPhoneNumber: "",
         customerAddress: "",
       };
+    },
+    async updateData() {
+      this.$store.commit("SET_LINECHART_LIST", []);
+      const fromDate = this.fromDate;
+      const toDate = this.toDate;
+      if (fromDate == null || toDate == null) {
+        this.$store.commit("SET_WARNING_MESSAGE", "Thông tin không được trống");
+        const alert = document.querySelector(".error-alert");
+        alert.classList.add("show");
+        this.alertMessage();
+        return;
+      }
+      await this.$store.dispatch("getLineChartData", { fromDate, toDate });
+      this.revenue = await this.$store.getters.getLineChartList;
     },
   },
 };

@@ -96,6 +96,9 @@ export default {
     ADD_NEW_EMP(state, data) {
       console.log(data);
     },
+    ADD_NEW_EMP_BY_FILE(state, data) {
+      console.log(data);
+    },
     REGISTER(state, payload) {
       console.log(payload.newUser.userID);
       sessionStorage.setItem(
@@ -152,6 +155,9 @@ export default {
   getters: {
     isAuthenticated: (state) => state.auth.isAuthenticated,
     isManager: (state) => {
+      if (state.user.role == null) {
+        return null;
+      }
       if (state.user.role.toLowerCase() == "admin") {
         return true;
       }
@@ -275,6 +281,23 @@ export default {
         console.log(e);
       }
     },
+    async addNewEmpByFile({ commit }, formData) {
+      const jwt = localStorage.getItem("jwt");
+      try {
+        const res = await axios.post(
+          `${BASE}/api/Employee/add-employee-from-excel-file`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${jwt}`,
+            },
+          }
+        );
+        commit("ADD_NEW_EMP_BY_FILE", res.data);
+      } catch (e) {
+        console.log(e);
+      }
+    },
     //REGISTER
     async register({ commit }, newUser) {
       const newAccount = new FormData();
@@ -316,6 +339,7 @@ export default {
         commit("SET_WARNING_MESSAGE", e.response.data);
       }
     },
+    //PASSWORD
     async forgotPassword({ commit }, email) {
       try {
         const res = await axios.post(`${BASE}/Auth/forgot-password/${email}`);

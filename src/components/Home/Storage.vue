@@ -1,5 +1,7 @@
 <template>
   <div class="storage">
+    <Alert :mess="alertMsg" />
+
     <div class="storage-header">
       <h1>Kho hàng</h1>
     </div>
@@ -167,6 +169,8 @@
       </div>
       <div class="adding-button">
         <button @click="submit">Thêm vào kho</button>
+        <button @click="addByFile">Thêm vào kho với file</button>
+        <input type="file" @change="uploadExcel" />
       </div>
     </div>
   </div>
@@ -174,7 +178,12 @@
 
 <script>
 import { mapGetters } from "vuex";
+import Alert from "../Common Components/Alert.vue";
+
 export default {
+  components: {
+    Alert,
+  },
   data() {
     return {
       commodityList: [],
@@ -186,6 +195,8 @@ export default {
       selectedFile: null,
       type: "All",
       brand: "",
+      excelFile: null,
+      alertMsg: "",
     };
   },
   async created() {
@@ -196,6 +207,13 @@ export default {
     ...mapGetters(["getAllCommodity"]),
   },
   methods: {
+    alertMessage() {
+      this.alertMsg = this.$store.getters.getWarningMessage;
+      const alertMessage = document.querySelector(".error-alert");
+      setTimeout(() => {
+        alertMessage.classList.remove("show");
+      }, 3000);
+    },
     changeDisplay(flag) {
       const addingPage = document.querySelector(".storage-adding");
       if (flag) {
@@ -236,6 +254,12 @@ export default {
         this.newCommodity.enterpriseAddress
       );
       await this.$store.dispatch("addCommodity", newIncomming);
+      if (!this.$store.getters.getAddSuccessful) {
+        const alert = document.querySelector(".error-alert");
+        alert.classList.add("show");
+        this.alertMessage();
+        return;
+      }
       await this.$store.dispatch("fetchCommodityList");
       this.commodityList = this.getAllCommodity;
       this.changeDisplay(false);
@@ -273,9 +297,8 @@ export default {
     searchFilter() {
       this.commodityList = this.getAllCommodity;
       if (this.brand != "") {
-        this.commodityList = this.commodityList.filter(
-          (commodity) =>
-            commodity.brand.toLowerCase() == this.brand.toLowerCase()
+        this.commodityList = this.commodityList.filter((commodity) =>
+          commodity.brand.toLowerCase().includes(this.brand.toLowerCase())
         );
       }
     },
@@ -284,6 +307,24 @@ export default {
     },
     addToCart(commodity) {
       this.$store.commit("SET_SELECTED_LIST", commodity);
+    },
+    async addByFile() {
+      const formData = new FormData();
+      formData.append("file", this.excelFile);
+      await this.$store.dispatch("addCommodityByExcel", formData);
+      if (!this.$store.getters.getAddSuccessful) {
+        const alert = document.querySelector(".error-alert");
+        alert.classList.add("show");
+        this.alertMessage();
+        return;
+      }
+      await this.$store.dispatch("fetchCommodityList");
+      this.commodityList = this.getAllCommodity;
+      this.changeDisplay(false);
+    },
+    uploadExcel(e) {
+      this.excelFile = e.target.files[0];
+      console.log(this.excelFile);
     },
   },
 };

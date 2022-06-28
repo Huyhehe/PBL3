@@ -124,6 +124,10 @@
       <div class="body-info-receiptBoard"></div>
     </div>
     <button class="add-button" @click="add">Thêm nhân viên</button>
+    <button class="add-button" @click="addByFile">
+      Thêm nhân viên với file
+    </button>
+    <input type="file" @change="uploadFile" />
   </div>
 </template>
 
@@ -151,6 +155,7 @@ export default {
       dateOut: null,
       newImage: "",
       selectedFile: null,
+      excelFile: null,
     };
   },
   created() {
@@ -215,6 +220,18 @@ export default {
     back() {
       this.$emit("back", { backFlag: false, addedFlag: true });
     },
+    uploadFile(e) {
+      console.log(e.target);
+      this.excelFile = e.target.files[0];
+      console.log(this.excelFile);
+    },
+    async addByFile() {
+      const formData = new FormData();
+      formData.append("file", this.excelFile);
+      await this.$store.dispatch("addNewEmpByFile", formData);
+      await this.$store.dispatch("fetchEmpList");
+      this.back();
+    },
   },
 };
 </script>
@@ -260,6 +277,7 @@ export default {
   padding: 0.5rem 1rem;
   cursor: pointer;
   transition: all 0.3s ease;
+  margin-right: 20px;
 
   &:hover {
     background-color: @primary-text-color-light-hover;
