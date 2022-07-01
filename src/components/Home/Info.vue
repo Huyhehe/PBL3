@@ -187,6 +187,8 @@ export default {
 
         console.log(newIncomming);
         await this.$store.dispatch("updateInfo", newIncomming);
+        await this.$store.dispatch("getCurrentUser");
+        this.$router.push({ name: "Info" });
         this.$store.dispatch("fetchEmpList");
       }
     },
