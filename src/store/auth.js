@@ -16,6 +16,8 @@ export default {
     resetPasswordTokenValid: false,
     resetPasswordSuccessful: false,
     changePasswordSuccessful: false,
+    updateEmpSuccessful: false,
+    deleteEmpSuccessful: false,
   },
   mutations: {
     SIGN_IN(state, { userAccount, userPassword }) {
@@ -76,14 +78,18 @@ export default {
       }
     },
     UPDATE_USER(state, user) {
-      console.log(user);
+      if (user == null) {
+        state.updateEmpSuccessful = false;
+        return;
+      }
       if (state.user.id == user.id) {
         state.user = user;
       }
+      state.updateEmpSuccessful = true;
     },
     SET_USER(state, user) {
       state.user = user;
-      state.user.dateOfBirth = new Date(new Date(user.dateOfBirth).setHours(7))
+      state.user.dateOfBirth = new Date(user.dateOfBirth)
         .toISOString()
         .slice(0, 10);
       state.auth.isAuthenticated = true;
@@ -151,6 +157,22 @@ export default {
       }
       state.changePasswordSuccessful = true;
     },
+    SET_EMP_EXCEL_FILE(state, data) {
+      const url = window.URL.createObjectURL(new Blob([data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "employee.xlsx"); //or any other extension
+      document.body.appendChild(link);
+      link.click();
+    },
+    DELETE_EMP(state, data) {
+      console.log(data);
+      if (data.status) {
+        state.deleteEmpSuccessful = true;
+        return;
+      }
+      state.deleteEmpSuccessful = data;
+    },
   },
   getters: {
     isAuthenticated: (state) => state.auth.isAuthenticated,
@@ -158,7 +180,7 @@ export default {
       if (state.user.role == null) {
         return null;
       }
-      if (state.user.role.toLowerCase() == "admin") {
+      if (state.user.role.toLowerCase() == "admin" || state.user.role == "0") {
         return true;
       }
       return false;
@@ -173,6 +195,8 @@ export default {
     getResetPasswordTokenValid: (state) => state.resetPasswordTokenValid,
     getResetPasswordSuccessful: (state) => state.resetPasswordSuccessful,
     getChangePasswordSuccessful: (state) => state.changePasswordSuccessful,
+    getUpdateEmpSuccessful: (state) => state.updateEmpSuccessful,
+    getDeleteEmpSuccessful: (state) => state.deleteEmpSuccessful,
   },
   actions: {
     //USER
@@ -244,7 +268,12 @@ export default {
         );
         commit("UPDATE_USER", res.data);
       } catch (e) {
-        console.log(e);
+        console.log(e.response.data.title);
+        if (e.response.data.title == null) {
+          commit("SET_WARNING_MESSAGE", e.response.data);
+        } else {
+          commit("SET_WARNING_MESSAGE", e.response.data.title);
+        }
       }
     },
     async updateInfo({ commit }, user) {
@@ -296,6 +325,40 @@ export default {
         commit("ADD_NEW_EMP_BY_FILE", res.data);
       } catch (e) {
         console.log(e);
+      }
+    },
+    async downloadEmpFile({ commit }) {
+      const jwt = localStorage.getItem("jwt");
+      try {
+        const res = await axios.get(
+          `${BASE}/api/Employee/export-employee-to-excel`,
+          {
+            responseType: "blob",
+            headers: {
+              Authorization: `Bearer ${jwt}`,
+            },
+          }
+        );
+        commit("SET_EMP_EXCEL_FILE", res.data);
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    async deleteEmp({ commit }, id) {
+      const jwt = localStorage.getItem("jwt");
+      try {
+        const res = await axios.delete(
+          `${BASE}/api/Employee/delete-employee/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${jwt}`,
+            },
+          }
+        );
+        commit("DELETE_EMP", res.data);
+      } catch (e) {
+        console.log(e);
+        commit("SET_WARNING_MESSAGE", e.response.data);
       }
     },
     //REGISTER

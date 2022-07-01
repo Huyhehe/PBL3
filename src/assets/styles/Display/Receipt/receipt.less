@@ -69,7 +69,7 @@
       display: flex;
       gap: 20px;
       .receipt-box-view {
-        height: 80vh;
+        height: 70vh;
         overflow: auto;
         width: 35%;
 
@@ -109,6 +109,7 @@
         flex-direction: column;
         width: calc(100% - 35% - 2px);
         gap: 20px;
+        height: 70vh;
 
         .search-box {
           display: flex;
@@ -143,13 +144,15 @@
           }
           .button-box {
             margin-top: auto;
-            padding: 5px 0;
+            padding: 4.5px 0;
+            display: flex;
+            gap: 10px;
             button {
               border: 1px solid @primary-text-color-light-hover;
               color: @primary-text-color-light-hover;
               background-color: transparent;
               border-radius: 5px;
-              padding: 4px 2rem;
+              padding: 4.5px 2rem;
               cursor: pointer;
               transition: all 0.3s ease;
 
@@ -164,33 +167,68 @@
         .display-box {
           display: flex;
           flex-direction: column;
-          gap: 20px;
-          table {
-            border-collapse: collapse;
-            width: 100%;
-            margin-top: 50px;
-            box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-            box-sizing: border-box;
+          justify-content: space-between;
+          flex-grow: 1;
 
-            th {
-              padding: 5px 20px;
+          .display-box-item {
+            height: 400px;
+            table {
+              border-collapse: collapse;
+              width: 100%;
+              box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+              box-sizing: border-box;
+
+              thead {
+                box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+                th {
+                  text-transform: uppercase;
+                  letter-spacing: 2px;
+                }
+              }
+              td,
+              th {
+                text-align: left;
+                padding: 10px 20px;
+              }
             }
           }
 
           .final-info {
             display: flex;
-            flex-direction: column;
-            align-items: flex-end;
+            justify-content: space-between;
+            .final-info-money {
+              display: flex;
+              flex-direction: column;
+              align-items: flex-end;
+              span {
+                font-size: 1.5rem;
+                color: @primary-text-color-light-hover;
+              }
+              #red {
+                color: @error-color;
+              }
+              #green {
+                color: @success-color;
+              }
+            }
+            .final-info-button {
+              display: flex;
+              align-items: flex-end;
+              button {
+                border: 1px solid @primary-text-color-light-hover;
+                color: @primary-text-color-light-hover;
+                background-color: transparent;
+                border-radius: 5px;
+                padding: 4.5px 2rem;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                font-size: 1.25rem;
 
-            span {
-              font-size: 1.5rem;
-              color: @primary-text-color-light-hover;
-            }
-            #red {
-              color: @error-color;
-            }
-            #green {
-              color: @success-color;
+                &:hover {
+                  background-color: @primary-text-color-light-hover;
+                  color: @background-color-light;
+                }
+              }
             }
           }
         }
@@ -430,3 +468,21 @@
     z-index: 100;
   }
 }
+
+// @media screen and (max-width: 1520px) {
+//   .receipt {
+//     .receipt-display {
+//       .receipt-content {
+//         .receipt-box-board {
+//           .search-box {
+//             .button-box {
+//               button {
+//                 padding: 4.5px 2rem;
+//               }
+//             }
+//           }
+//         }
+//       }
+//     }
+//   }
+// }

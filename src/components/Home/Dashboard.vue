@@ -7,10 +7,16 @@
     >
       <div class="home-container-title">Danh sách nhân viên</div>
       <div class="search-form">
-        <button @click="showAll">Show All</button>
+        <button @click="showAll">Xem tất cả</button>
         <button @click="addView(true)">Thêm nhân viên mới</button>
-        <form @submit.prevent="filter()">
-          <input v-model="empName" type="text" placeholder="Search by name" />
+        <button @click="downloadFile">Tải xuống danh sách nhân viên</button>
+        <form>
+          <input
+            @input="filter()"
+            v-model="empName"
+            type="text"
+            placeholder="Search by name"
+          />
         </form>
       </div>
       <table>
@@ -31,26 +37,10 @@
             <td>{{ emp.dateOfBirth }}</td>
             <td>{{ emp.gender ? "Male" : "Female" }}</td>
             <td>{{ emp.phoneNumber }}</td>
-            <td :class="emp.role == 'admin' ? 'is-manager' : 'is-employee'">
+            <td>
               {{ roleText(emp.role) }}
             </td>
           </tr>
-          <!-- <router-link
-            tag="tr"
-            v-for="emp in empList"
-            :key="emp.id"
-            :to="{ name: 'User', params: { id: emp.id } }"
-            class="employee-row"
-          >
-            <td id="td-id">{{ emp.id }}</td>
-            <td>{{ emp.firstName }} {{ emp.lastName }}</td>
-            <td>{{ emp.dateOfBirth }}</td>
-            <td>{{ emp.gender ? "Male" : "Female" }}</td>
-            <td>{{ emp.phoneNumber }}</td>
-            <td :class="emp.role == 'admin' ? 'is-manager' : 'is-employee'">
-              {{ emp.role == "admin" ? "Quản lý" : "Nhân viên" }}
-            </td>
-          </router-link> -->
         </tbody>
       </table>
     </div>
@@ -129,15 +119,34 @@ export default {
     },
     back(flag) {
       this.addView(flag.backFlag);
-      // if (flag.addedFlag) {
-      //   this.empList = this.getAl
-      // }
     },
     roleText(role) {
+      if (role == "0") {
+        return "Đặc biệt";
+      }
       if (role.toLowerCase() == "admin") {
         return "Quản lý";
       }
       return "Nhân viên";
+    },
+    downloadFile() {
+      this.$store.dispatch("downloadEmpFile");
+      // const jwt = localStorage.getItem("jwt");
+      // axios({
+      //   url: "https://shopguitar.azurewebsites.net/api/Employee/export-employee-to-excel", //your url
+      //   method: "GET",
+      //   responseType: "blob", // important
+      //   headers: {
+      //     Authorization: `Bearer ${jwt}`,
+      //   },
+      // }).then((response) => {
+      //   const url = window.URL.createObjectURL(new Blob([response.data]));
+      //   const link = document.createElement("a");
+      //   link.href = url;
+      //   link.setAttribute("download", "employee.xlsx"); //or any other extension
+      //   document.body.appendChild(link);
+      //   link.click();
+      // });
     },
   },
 };

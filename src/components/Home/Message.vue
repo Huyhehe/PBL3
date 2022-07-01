@@ -2,7 +2,7 @@
   <div class="message">
     <h1 class="title">Thông báo</h1>
     <div class="message-container">
-      <div class="message-add" @click="popUp(true)">
+      <div class="message-add" @click="popUp(true)" v-if="isManager">
         <span>Thêm thông báo mới</span>
         <unicon name="plus" />
       </div>

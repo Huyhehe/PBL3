@@ -19,13 +19,17 @@
             type="text"
             placeholder="Hãng sản xuất"
             v-model="brand"
-            @change="searchFilter"
+            @input="searchFilter"
           />
         </div>
         <div class="toolbox-add">
           <button @click="changeDisplay(true)">
             <span>Thêm vào kho hàng</span>
             <unicon name="plus" />
+          </button>
+          <button @click="downloadFile">
+            <span>Tải xuống kho hàng</span>
+            <unicon name="import" />
           </button>
         </div>
       </div>
@@ -52,12 +56,20 @@
               <div class="card-button">
                 <button @click="addToCart(commodity)">Thêm vào giỏ hàng</button>
               </div>
-              <button
-                class="del-button"
-                @click="deleteCommodity(commodity.commodityId)"
-              >
-                <unicon name="trash-alt" />
-              </button>
+              <div class="service-button-box">
+                <button
+                  class="edit-button"
+                  @click="editCommodity(commodity.commodityId)"
+                >
+                  <unicon name="pen" />
+                </button>
+                <button
+                  class="del-button"
+                  @click="deleteCommodity(commodity.commodityId)"
+                >
+                  <unicon name="trash-alt" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -65,7 +77,7 @@
     </div>
     <div class="storage-adding">
       <div class="adding-header">
-        <button @click="changeDisplay(false)">
+        <button @click="back">
           <unicon name="angle-left-b" />
           <span>Trở lại</span>
         </button>
@@ -104,7 +116,7 @@
                 v-model="newCommodity.name"
               />
             </div>
-            <div class="input-box">
+            <div class="input-box" v-if="!isEdit">
               <span>ID</span>
               <input
                 type="text"
@@ -140,7 +152,7 @@
             </div>
           </div>
           <div class="right">
-            <div class="input-box">
+            <div class="input-box" v-if="!isEdit">
               <span>Tên nhà cung cấp</span>
               <input
                 type="text"
@@ -148,7 +160,7 @@
                 v-model="newCommodity.enterpriseName"
               />
             </div>
-            <div class="input-box">
+            <div class="input-box" v-if="!isEdit">
               <span>Số điện thoại nhà cung cấp</span>
               <input
                 type="text"
@@ -156,7 +168,7 @@
                 v-model="newCommodity.enterprisePhoneNumber"
               />
             </div>
-            <div class="input-box">
+            <div class="input-box" v-if="!isEdit">
               <span>Địa chỉ nhà cung cấp</span>
               <input
                 type="text"
@@ -168,9 +180,10 @@
         </div>
       </div>
       <div class="adding-button">
-        <button @click="submit">Thêm vào kho</button>
-        <button @click="addByFile">Thêm vào kho với file</button>
-        <input type="file" @change="uploadExcel" />
+        <button @click="update" v-if="isEdit">Hoàn tất</button>
+        <button @click="submit" v-if="!isEdit">Thêm vào kho</button>
+        <button @click="addByFile" v-if="!isEdit">Thêm vào kho với file</button>
+        <input type="file" @change="uploadExcel" v-if="!isEdit" />
       </div>
     </div>
   </div>
@@ -191,12 +204,18 @@ export default {
       emptyImage: null,
       newCommodity: {
         type: "Guitar",
+        name: "",
+        brand: "",
+        warrantyTime: "",
+        quantity: "",
+        price: "",
       },
       selectedFile: null,
       type: "All",
       brand: "",
       excelFile: null,
       alertMsg: "",
+      isEdit: false,
     };
   },
   async created() {
@@ -262,13 +281,46 @@ export default {
       }
       await this.$store.dispatch("fetchCommodityList");
       this.commodityList = this.getAllCommodity;
-      this.changeDisplay(false);
+      this.back();
     },
     async deleteCommodity(id) {
       console.log(id);
       await this.$store.dispatch("deleteCommodity", id);
       await this.$store.dispatch("fetchCommodityList");
       this.commodityList = this.getAllCommodity;
+    },
+    async editCommodity(id) {
+      console.log(id);
+      this.isEdit = true;
+      await this.$store.dispatch("getSingleCommodity", id);
+      const editCommodity = await this.$store.getters.getSingleCommodityItem;
+      console.log(editCommodity);
+      this.newCommodity.commodityId = id;
+      this.newCommodity.type = editCommodity.type;
+      this.newCommodity.name = editCommodity.name;
+      this.newCommodity.quantity = editCommodity.quantity;
+      this.newCommodity.price = editCommodity.price;
+      this.newCommodity.brand = editCommodity.brand;
+      this.newCommodity.warrantyTime = editCommodity.warrantyTime;
+      this.newImage = editCommodity.imageUri;
+      this.changeDisplay(true);
+    },
+    async update() {
+      this.newCommodity.price = +this.newCommodity.price;
+      this.newCommodity.quantity = +this.newCommodity.quantity;
+      const newIncomming = new FormData();
+      newIncomming.append("commodityId", this.newCommodity.commodityId);
+      newIncomming.append("type", this.newCommodity.type);
+      newIncomming.append("quantity", this.newCommodity.quantity);
+      newIncomming.append("brand", this.newCommodity.brand);
+      newIncomming.append("name", this.newCommodity.name);
+      newIncomming.append("price", this.newCommodity.price);
+      newIncomming.append("warrantyTime", this.newCommodity.warrantyTime);
+      newIncomming.append("imageFile", this.selectedFile);
+      await this.$store.dispatch("updateCommodity", newIncomming);
+      await this.$store.dispatch("fetchCommodityList");
+      this.commodityList = await this.getAllCommodity;
+      this.back();
     },
     formatMoney(num) {
       num = +num;
@@ -296,10 +348,34 @@ export default {
     },
     searchFilter() {
       this.commodityList = this.getAllCommodity;
+      if (this.type == "All") {
+        if (this.brand != "") {
+          this.commodityList = this.commodityList.filter((commodity) =>
+            commodity.brand.toLowerCase().includes(this.brand.toLowerCase())
+          );
+        }
+        return;
+      }
       if (this.brand != "") {
-        this.commodityList = this.commodityList.filter((commodity) =>
-          commodity.brand.toLowerCase().includes(this.brand.toLowerCase())
-        );
+        if (this.type == "Guitar") {
+          this.commodityList = this.commodityList.filter(
+            (commodity) =>
+              commodity.brand
+                .toLowerCase()
+                .includes(this.brand.toLowerCase()) &&
+              commodity.type.toLowerCase() == this.type.toLowerCase()
+          );
+        } else {
+          this.commodityList = this.commodityList.filter(
+            (commodity) =>
+              commodity.brand
+                .toLowerCase()
+                .includes(this.brand.toLowerCase()) &&
+              commodity.type.toLowerCase() != "guitar"
+          );
+        }
+      } else {
+        this.selectFilter();
       }
     },
     truncate(str, n) {
@@ -325,6 +401,17 @@ export default {
     uploadExcel(e) {
       this.excelFile = e.target.files[0];
       console.log(this.excelFile);
+    },
+    back() {
+      this.changeDisplay(false);
+      this.isEdit = false;
+      this.newCommodity = {
+        type: "Guitar",
+      };
+      this.newImage = "";
+    },
+    downloadFile() {
+      this.$store.dispatch("downloadStorageFile");
     },
   },
 };

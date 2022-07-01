@@ -6,6 +6,7 @@ export default {
     receiptList: [],
     selectedList: [],
     lineChartList: [],
+    addReceiptSuccessful: false,
   },
   mutations: {
     SET_LIST(state, data) {
@@ -64,11 +65,23 @@ export default {
     SET_LINECHART_LIST(state, data) {
       state.lineChartList = data;
     },
+    SET_ADD_RECEIPT_STATUS(state, status) {
+      state.addReceiptSuccessful = status;
+    },
+    SET_REVENUE_EXCEL_FILE(state, data) {
+      const url = window.URL.createObjectURL(new Blob([data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "revenue.xlsx"); //or any other extension
+      document.body.appendChild(link);
+      link.click();
+    },
   },
   getters: {
     getAllReceipt: (state) => state.receiptList,
     getSelectedList: (state) => state.selectedList,
     getLineChartList: (state) => state.lineChartList,
+    getAddReceiptSuccessful: (state) => state.addReceiptSuccessful,
   },
   actions: {
     async getAllReceipt({ commit }) {
@@ -87,6 +100,7 @@ export default {
     },
     async addReceipt({ commit }, receipt) {
       const jwt = localStorage.getItem("jwt");
+      console.log(receipt);
       try {
         const res = await axios.post(
           `${BASE}/api/Receipt/add-receipt`,
@@ -98,8 +112,11 @@ export default {
           }
         );
         commit("ADD_RECEIPT", res.data);
-      } catch (err) {
-        console.log(err);
+        commit("SET_ADD_RECEIPT_STATUS", true);
+      } catch (e) {
+        console.log(e);
+        commit("SET_ADD_RECEIPT_STATUS", false);
+        commit("SET_WARNING_MESSAGE", e.response.data);
       }
     },
     async getLineChartData({ commit }, payload) {
@@ -114,6 +131,22 @@ export default {
           }
         );
         commit("SET_LINECHART_LIST", res.data);
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    async downloadRevenue({ commit }, { fromDate, toDate }) {
+      const jwt = localStorage.getItem("jwt");
+      try {
+        const res = await axios.get(
+          `${BASE}/api/Receipt/export-revenue/${fromDate}/${toDate}`,
+          {
+            headers: {
+              Authorization: `Bearer ${jwt}`,
+            },
+          }
+        );
+        commit("SET_REVENUE_EXCEL_FILE", res.data);
       } catch (e) {
         console.log(e);
       }

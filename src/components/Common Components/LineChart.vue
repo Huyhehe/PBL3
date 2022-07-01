@@ -25,7 +25,6 @@ import {
   CategoryScale,
   PointElement,
 } from "chart.js";
-
 ChartJS.register(
   Title,
   Tooltip,
@@ -72,7 +71,7 @@ export default {
     },
     revenue: {
       type: Array,
-      require,
+      require: true,
     },
   },
   data() {

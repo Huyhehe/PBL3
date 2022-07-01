@@ -25,6 +25,7 @@ import {
   uniPlus,
   uniAngleLeftB,
   uniCameraPlus,
+  uniImport,
 } from "vue-unicons/dist/icons";
 
 Unicon.add([
@@ -45,6 +46,7 @@ Unicon.add([
   uniPlus,
   uniAngleLeftB,
   uniCameraPlus,
+  uniImport,
 ]);
 Vue.use(Unicon);
 Vue.use(DatePicker);

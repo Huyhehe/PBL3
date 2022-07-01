@@ -1,5 +1,9 @@
 <template>
   <div class="user">
+    <Alert :mess="alertMsg" />
+    <div class="title">
+      <span>Thông tin nhân viên</span>
+    </div>
     <div class="header">
       <div class="header-img-box">
         <div v-if="!isInputting" class="change-icon" @click="chooseFile">
@@ -18,7 +22,14 @@
         <p class="header-role">
           {{ emp.role == "admin" ? "Quản lý" : "Nhân viên" }}
         </p>
-        <unicon :name="isInputting ? 'pen' : 'save'" @click="editProfile" />
+        <div class="header-tool-box">
+          <unicon
+            class="purple"
+            :name="isInputting ? 'pen' : 'save'"
+            @click="editProfile"
+          />
+          <unicon class="red" name="trash-alt" @click="deleteEmp" />
+        </div>
       </div>
     </div>
     <div class="body">
@@ -52,14 +63,14 @@
                     <input
                       type="number"
                       :disabled="isInputting"
-                      v-model="salary.salary"
+                      v-model="emp.salary"
                     />
                   </div>
                 </div>
                 <div class="input-box-salary-item">
                   <span class="input-box-salary-header">Dạng</span>
                   <div class="input-box">
-                    <select :disabled="isInputting" v-model="title.name">
+                    <select :disabled="isInputting" v-model="emp.titleName">
                       <option value="Full Time">Full Time</option>
                       <option value="Part Time">Part Time</option>
                     </select>
@@ -136,32 +147,26 @@
 
 <script>
 import { mapGetters } from "vuex";
+import Alert from "../Common Components/Alert.vue";
+
 export default {
+  components: {
+    Alert,
+  },
   data() {
     return {
       id: this.$route.params.id,
       emp: {},
       isInputting: true,
-      salary: {},
-      title: {},
       dateOfBirth: null,
       newImage: "",
       selectedFile: null,
+      alertMsg: "",
     };
   },
   created() {
     this.setEmp(this.id);
     this.emp = this.getEmp;
-    if (this.emp.salary.length != 0) {
-      this.salary = this.emp.salary[0];
-    } else {
-      this.salary.salary = 0;
-    }
-    if (this.emp.title.length != 0) {
-      this.title = this.emp.title[0];
-    } else {
-      this.title.name = "Part time";
-    }
     this.dateOfBirth = this.emp.dateOfBirth;
   },
   mounted() {
@@ -181,6 +186,13 @@ export default {
     ...mapGetters(["getEmp", "getUser"]),
   },
   methods: {
+    alertMessage() {
+      this.alertMsg = this.$store.getters.getWarningMessage;
+      const alertMessage = document.querySelector(".error-alert");
+      setTimeout(() => {
+        alertMessage.classList.remove("show");
+      }, 3000);
+    },
     setEmp(id) {
       this.$store.commit("SET_SINGLE_EMP", id);
     },
@@ -190,12 +202,6 @@ export default {
     async editProfile() {
       this.isInputting = !this.isInputting;
       if (this.isInputting) {
-        if (this.title.dateIn == null) {
-          this.title.dateIn = new Date().toLocaleDateString();
-        }
-        if (this.title.dateOut == null) {
-          this.title.dateOut = new Date().toLocaleDateString();
-        }
         const newEmp = {
           employeeId: this.id,
           managerId: this.emp.managerId,
@@ -208,10 +214,10 @@ export default {
           address: this.emp.address,
           role: this.emp.role,
           imageFile: this.emp.avatar,
-          titleName: this.title.name,
-          dateIn: this.title.dateIn,
-          dateOut: this.title.dateOut,
-          salary: this.salary.salary,
+          titleName: this.emp.titleName,
+          dateIn: this.emp.dateIn,
+          dateOut: this.emp.dateOut,
+          salary: this.emp.salary,
         };
 
         const newIncoming = new FormData();
@@ -232,10 +238,18 @@ export default {
         newIncoming.append("salary", newEmp.salary);
 
         await this.$store.dispatch("updateEmp", newIncoming);
+        if (!this.$store.getters.getUpdateEmpSuccessful) {
+          const alert = document.querySelector(".error-alert");
+          alert.classList.add("show");
+          this.alertMessage();
+        }
         await this.$store.dispatch("fetchEmpList");
+        this.$store.commit("UPDATE_USER", null);
         if (newEmp.employeeId == this.getUser.id) {
           sessionStorage.setItem("userChanged", true);
           await this.$store.dispatch("getCurrentUser");
+          this.$router.push({ name: "Dashboard" });
+          location.reload();
         } else {
           sessionStorage.setItem("userChanged", false);
         }
@@ -244,10 +258,7 @@ export default {
     previewFile(e) {
       const file = e.target.files[0];
       this.selectedFile = file;
-
       const theReader = new FileReader();
-      // Nhớ sử dụng async/await để chờ khi đã convert thành công image sang base64 thì mới bắt đầu gán cho biến newImage
-      // đây là 1 kinh nghiệm của mình khi upload multiple ảnh
       theReader.onloadend = async () => {
         this.newImage = await theReader.result;
       };
@@ -255,6 +266,19 @@ export default {
     },
     chooseFile() {
       this.$refs.inputFile.click();
+    },
+    async deleteEmp() {
+      const id = this.id;
+      await this.$store.dispatch("deleteEmp", id);
+      if (!this.$store.getters.getDeleteEmpSuccessful) {
+        const alert = document.querySelector(".error-alert");
+        alert.classList.add("show");
+        this.alertMessage();
+        return;
+      }
+      await this.$store.dispatch("fetchEmpList");
+      this.$store.commit("DELETE_EMP", false);
+      this.$router.push({ name: "Dashboard" });
     },
   },
 };

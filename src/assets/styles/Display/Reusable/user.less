@@ -1,7 +1,26 @@
 @import "~@/assets/variables.less";
 .user {
   height: 100vh;
-  padding: 5rem 50px;
+  padding: 1.5rem 50px;
+
+  .title {
+    font-size: 2.5rem;
+    color: @primary-text-color-light;
+    padding: 0.5rem 0;
+    margin-bottom: 2rem;
+    text-align: center;
+    position: relative;
+
+    &::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      height: 1px;
+      width: 100%;
+      background-color: #c3d1e3;
+    }
+  }
 
   .header {
     display: flex;
@@ -16,16 +35,16 @@
       position: relative;
 
       .change-icon {
-        width: 45px;
+        width: 40px;
         aspect-ratio: 1/1;
         position: absolute;
-        bottom: 0;
-        right: 0;
-        // background-color: @background-color-light;
-        border-radius: 100%;
+        bottom: -0.5rem;
+        right: -0.5rem;
+        border-radius: 9999px;
         display: flex;
         justify-content: center;
         align-items: center;
+        cursor: pointer;
         .unicon {
           width: 30px;
           height: 30px;
@@ -48,12 +67,25 @@
       align-items: flex-start;
       position: relative;
 
-      .unicon {
+      .header-tool-box {
         position: absolute;
         right: 0;
         top: 0;
         transform: translate(120%, 15%);
-        fill: #aaaaaa;
+        .unicon {
+          fill: #aaaaaa;
+          cursor: pointer;
+        }
+        .purple {
+          &:hover {
+            fill: @primary-text-color-light-hover;
+          }
+        }
+        .red {
+          &:hover {
+            fill: @error-color;
+          }
+        }
       }
 
       p {

@@ -42,22 +42,43 @@
               <a-date-picker v-model="toDate" />
             </div>
             <div class="button-box">
-              <button @click="updateData">Xem</button>
+              <button @click="getButtonClick">Xem</button>
+              <button @click="changeBoardView">
+                {{ isRevenue ? "Lịch sử" : "Thống kê" }}
+              </button>
             </div>
           </div>
           <div class="display-box">
-            <!-- <table>
-              <thead>
-                <tr>
-                  <th v-for="title in titles" :key="title">{{ title }}</th>
-                </tr>
-              </thead>
-            </table> -->
-            <LineChart :revenue="revenue" />
+            <div class="display-box-item" v-if="!isRevenue">
+              <table>
+                <thead>
+                  <tr>
+                    <th v-for="title in titles" :key="title">{{ title }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="cmd in commoditySoldList" :key="cmd.commodityId">
+                    <td>{{ cmd.commodityId }}</td>
+                    <td>{{ cmd.type }}</td>
+                    <td>{{ cmd.name }}</td>
+                    <td>{{ cmd.quantity }}</td>
+                    <td>{{ formatMoney(cmd.price) }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="display-box-item" v-if="isRevenue">
+              <LineChart :revenue="revenue" />
+            </div>
             <div class="final-info">
-              <span id="red">-{{ getMoneyOut }}</span>
-              <span id="green">+{{ getMoneyIn }}</span>
-              <span>Tổng cộng: {{ getFinalTotal }}</span>
+              <div class="final-info-button">
+                <button @click="download">Tải xuống</button>
+              </div>
+              <div class="final-info-money">
+                <span id="red" v-if="isRevenue">-{{ getMoneyOut }}</span>
+                <span id="green">+{{ getMoneyIn }}</span>
+                <span v-if="isRevenue">Tổng cộng: {{ getFinalTotal }}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -118,7 +139,7 @@
           </div>
           <div class="receipt-cart-item-info">
             <span class="type">{{ item.type }}</span>
-            <span>Tên mặt hàng: {{ item.brand }} {{ item.name }} </span>
+            <span>Tên mặt hàng: {{ item.brand }} {{ item.name }}</span>
             <span>Mã mặt hàng: #{{ item.commodityId }}</span>
             <span>Đơn giá (VND): {{ formatMoney(item.price) }}</span>
             <div class="quantity-box">
@@ -158,7 +179,7 @@ export default {
   },
   data() {
     return {
-      titles: ["ID", "Loại", "Tên", "Số lượng", "Tổng tiền"],
+      titles: ["ID", "Loại", "Tên", "Số lượng", "Đơn giá"],
       customer: {
         customerName: "",
         customerPhoneNumber: "",
@@ -173,7 +194,9 @@ export default {
       selectedList: [],
       totalPrice: 0,
       revenue: [],
+      commoditySoldList: [],
       alertMsg: "",
+      isRevenue: true,
     };
   },
   async created() {
@@ -300,6 +323,12 @@ export default {
         customerAddress: this.customer.customerAddress,
       };
       await this.$store.dispatch("addReceipt", newReceipt);
+      if (!this.$store.getters.getAddReceiptSuccessful) {
+        const alert = document.querySelector(".error-alert");
+        alert.classList.add("show");
+        this.alertMessage();
+        return;
+      }
       await this.$store.dispatch("getAllReceipt");
       this.receiptList = this.getAllReceipt;
       this.changeDisplay(false);
@@ -327,6 +356,61 @@ export default {
       }
       await this.$store.dispatch("getLineChartData", { fromDate, toDate });
       this.revenue = await this.$store.getters.getLineChartList;
+    },
+    changeBoardView() {
+      this.isRevenue = !this.isRevenue;
+    },
+    async getHistory() {
+      this.$store.commit("SET_COMMODITY_SOLD_LIST", []);
+      const fromDate = this.fromDate;
+      const toDate = this.toDate;
+      if (fromDate == null || toDate == null) {
+        this.$store.commit("SET_WARNING_MESSAGE", "Thông tin không được trống");
+        const alert = document.querySelector(".error-alert");
+        alert.classList.add("show");
+        this.alertMessage();
+        return;
+      }
+      await this.$store.dispatch("getCommoditySold", { fromDate, toDate });
+      this.commoditySoldList = await this.$store.getters.getCommoditySoldList;
+    },
+    getButtonClick() {
+      if (this.isRevenue) {
+        this.updateData();
+      } else {
+        this.getHistory();
+      }
+    },
+    downloadCommoditySold() {
+      const fromDate = this.fromDate;
+      const toDate = this.toDate;
+      if (fromDate == null || toDate == null) {
+        this.$store.commit("SET_WARNING_MESSAGE", "Thông tin không được trống");
+        const alert = document.querySelector(".error-alert");
+        alert.classList.add("show");
+        this.alertMessage();
+        return;
+      }
+      this.$store.dispatch("downloadStorageFileByDate", { fromDate, toDate });
+    },
+    downloadRevenue() {
+      const fromDate = this.fromDate;
+      const toDate = this.toDate;
+      if (fromDate == null || toDate == null) {
+        this.$store.commit("SET_WARNING_MESSAGE", "Thông tin không được trống");
+        const alert = document.querySelector(".error-alert");
+        alert.classList.add("show");
+        this.alertMessage();
+        return;
+      }
+      this.$store.dispatch("downloadRevenue", { fromDate, toDate });
+    },
+    download() {
+      if (this.isRevenue) {
+        this.downloadRevenue();
+      } else {
+        this.downloadCommoditySold();
+      }
     },
   },
 };

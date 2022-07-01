@@ -34,7 +34,7 @@
     .toolbox {
       padding: 1rem 0;
       display: flex;
-      gap: 1.5rem;
+      gap: 1.25rem;
 
       .toolbox-type {
         select {
@@ -69,6 +69,8 @@
       }
 
       .toolbox-add {
+        display: flex;
+        gap: 1.25rem;
         button {
           outline: none;
           border: 1px solid @primary-text-color-light;
@@ -128,6 +130,7 @@
           box-sizing: border-box;
           overflow: hidden;
           width: 250px;
+          margin-bottom: 10px;
 
           // border-radius: 8px;
 
@@ -146,7 +149,7 @@
             &:hover {
               border-color: @primary-text-color-light-hover;
 
-              .del-button {
+              .service-button-box {
                 transform: translateX(0);
               }
 
@@ -161,20 +164,27 @@
               }
             }
 
-            .del-button {
-              width: 40px;
-              height: 40px;
+            .service-button-box {
               position: absolute;
               right: 0;
               top: 0;
-              background-color: @error-color;
-              border: none;
               transform: translateX(150%);
               transition: all 0.3s ease;
-              cursor: pointer;
 
-              .unicon {
-                fill: @background-color-light;
+              .del-button,
+              .edit-button {
+                width: 40px;
+                height: 40px;
+                background-color: @error-color;
+                border: none;
+                cursor: pointer;
+
+                .unicon {
+                  fill: @background-color-light;
+                }
+              }
+              .edit-button {
+                background-color: #007bff;
               }
             }
 
