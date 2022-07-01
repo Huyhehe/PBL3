@@ -141,6 +141,7 @@ export default {
         const res = await axios.get(
           `${BASE}/api/Receipt/export-revenue/${fromDate}/${toDate}`,
           {
+            responseType: "blob",
             headers: {
               Authorization: `Bearer ${jwt}`,
             },
